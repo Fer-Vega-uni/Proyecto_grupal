@@ -1,5 +1,7 @@
 package Ventanas;
 
+import Logica.Login;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -65,6 +67,7 @@ public class VentanaLogin {
         btnIngresar.setFont(new Font("Arial", Font.BOLD, 15));
         btnIngresar.setBackground(new Color(1, 53, 110));
         btnIngresar.setForeground(Color.WHITE);
+        btnIngresar.addActionListener(e -> verificacionLgin());
         btnRegistrar.setBounds(360,235,120,25);
         btnRegistrar.setFont(new Font("Arial", Font.BOLD, 15));
         btnRegistrar.setBackground(new Color(1, 53, 110));
@@ -83,6 +86,21 @@ public class VentanaLogin {
         ImageIcon logoUfroActual = (ImageIcon) lbllogoUFRO.getIcon();
         Image logoUfroReEscalado = logoUfroActual.getImage().getScaledInstance(110, 94, Image.SCALE_SMOOTH);
         return new ImageIcon(logoUfroReEscalado);
+    }
+
+    public void verificacionLgin() {
+        Login login = new Login();
+        String m = txtMatricula.getText();
+        String c = txtContraseña.getText();
+        String nombre = login.validarLogin(m,c);
+
+        if (m.isEmpty() || c.isEmpty()){
+            JOptionPane.showMessageDialog(frameLogin,"Porfavor, rellene todas las casillas", "Inicio de sesion invalido", JOptionPane.INFORMATION_MESSAGE);
+        } else if (nombre.isEmpty()) {
+            JOptionPane.showMessageDialog(frameLogin,"Matricula y/o Contraseña no validas, por favor intente nuevamente", "Inicio de sesion invalido", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(frameLogin,"Bienvenido " + nombre, "Inicio de sesion exitoso", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 }
 
