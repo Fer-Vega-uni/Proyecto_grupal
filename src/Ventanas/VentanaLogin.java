@@ -85,3 +85,4 @@ public class VentanaLogin {
         return new ImageIcon(logoUfroReEscalado);
     }
 }
+
