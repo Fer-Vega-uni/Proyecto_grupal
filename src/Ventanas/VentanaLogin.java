@@ -29,7 +29,7 @@ public class VentanaLogin {
 
     }
 
-    public void mostrarVentana(){
+    public void mostrarVentanaLogin(){
         imagenesLogin();
         labelsVentanaLogin();
         textosVentanaLogin();
@@ -72,6 +72,7 @@ public class VentanaLogin {
         btnRegistrar.setFont(new Font("Arial", Font.BOLD, 15));
         btnRegistrar.setBackground(new Color(1, 53, 110));
         btnRegistrar.setForeground(Color.WHITE);
+        btnRegistrar.addActionListener(e -> abrirRegistro());
 
     }
 
@@ -101,6 +102,12 @@ public class VentanaLogin {
         } else {
             JOptionPane.showMessageDialog(frameLogin,"Bienvenido " + nombre, "Inicio de sesion exitoso", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    public void abrirRegistro(){
+        VentanaRegistro Registro = new VentanaRegistro();
+        frameLogin.dispose();
+        Registro.mostrarVentanaRegistro();
     }
 }
 
