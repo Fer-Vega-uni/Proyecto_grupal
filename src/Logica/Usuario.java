@@ -13,9 +13,17 @@ public class Usuario {
         this.carrera = carrera;
     }
 
-    public boolean validarCredenciales(String m, String c) {
-        return this.matricula.equals(m) && this.contraseña.equals(c);
+    public boolean validarCredenciales(String m, String p) {
+        return this.matricula.equals(m) && this.contraseña.equals(p);
     }
+
+    public boolean verficarDuplicado(String m) {
+        return this.matricula.equals(m);
+    }
+    public boolean verficarNombreDuplicado(String n) {
+        return this.nombre.toLowerCase().equals(n.toLowerCase());
+    }
+
 
     public String getNombre() {
         return nombre;

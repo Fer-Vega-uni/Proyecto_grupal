@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class VentanaLogin {
+    Login login = new Login();
+    VentanaRegistro Registro = new VentanaRegistro();
     private final JFrame frameLogin = new JFrame("Login - SCA.");
     private final JLabel lbllogoUFRO = new JLabel(new ImageIcon("C:/Users/malej/OneDrive/Escritorio/POO/Visual Proyecto/Logo_Nuevo_Ufro.png"));
     private final JLabel lblMatrucla = new JLabel("Matricula");
@@ -67,7 +69,7 @@ public class VentanaLogin {
         btnIngresar.setFont(new Font("Arial", Font.BOLD, 15));
         btnIngresar.setBackground(new Color(1, 53, 110));
         btnIngresar.setForeground(Color.WHITE);
-        btnIngresar.addActionListener(e -> verificacionLgin());
+        btnIngresar.addActionListener(e -> verificacionLogin());
         btnRegistrar.setBounds(360,235,120,25);
         btnRegistrar.setFont(new Font("Arial", Font.BOLD, 15));
         btnRegistrar.setBackground(new Color(1, 53, 110));
@@ -89,14 +91,13 @@ public class VentanaLogin {
         return new ImageIcon(logoUfroReEscalado);
     }
 
-    public void verificacionLgin() {
-        Login login = new Login();
+    public void verificacionLogin() {
         String m = txtMatricula.getText();
-        String c = txtContraseña.getText();
-        String nombre = login.validarLogin(m,c);
+        String p = txtContraseña.getText();
+        String nombre = login.validarLogin(m,p);
 
-        if (m.isEmpty() || c.isEmpty()){
-            JOptionPane.showMessageDialog(frameLogin,"Porfavor, rellene todas las casillas", "Inicio de sesion invalido", JOptionPane.INFORMATION_MESSAGE);
+        if (m.isEmpty() || p.isEmpty()) {
+            JOptionPane.showMessageDialog(frameLogin,"Porfavor, rellene todas las casillas", "Registro invalido", JOptionPane.INFORMATION_MESSAGE);
         } else if (nombre.isEmpty()) {
             JOptionPane.showMessageDialog(frameLogin,"Matricula y/o Contraseña no validas, por favor intente nuevamente", "Inicio de sesion invalido", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -105,7 +106,6 @@ public class VentanaLogin {
     }
 
     public void abrirRegistro(){
-        VentanaRegistro Registro = new VentanaRegistro();
         frameLogin.dispose();
         Registro.mostrarVentanaRegistro();
     }
