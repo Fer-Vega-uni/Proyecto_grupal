@@ -38,4 +38,18 @@ public class Herramientas {
         boton.addActionListener(accion);
         return boton;
     }
+
+    public JLabel crearImagen(String ruta, int x, int y, int largo, int alto) {
+        ImageIcon icon = new ImageIcon(getClass().getResource(ruta));
+        Image img = icon.getImage().getScaledInstance(largo, alto, Image.SCALE_SMOOTH);
+        icon = new ImageIcon(img);
+        JLabel imagen = new JLabel(icon);
+        imagen.setBounds(x, y, largo, alto);
+        return imagen;
+    }
+
+    public Image getIcono() {
+        return new ImageIcon(getClass().getResource("/Recursos/Logo_SCA.png")).getImage();
+    }
+
 }
