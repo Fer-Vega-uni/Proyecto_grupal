@@ -36,10 +36,7 @@ public class Menu {
     public static void seleccionarOpcion(int opcion) {
         switch (opcion) {
             case 1 -> {Archivos.verArchivos();}
-            case 2 -> {
-                System.out.println("Ingrese el nombre del archivo a buscar");
-                Archivos.buscarArchivos(scan.nextLine());
-            }
+            case 2 -> {                Archivos.buscarArchivos();}
             case 3 -> {Archivos.agregarArchivo();}
             case 4 -> {Archivos.eliminarArchivo();}
             case 5 -> {Archivos.agregarFavorito();}
