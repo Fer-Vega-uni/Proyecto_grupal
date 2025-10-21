@@ -40,6 +40,7 @@ public class Menu {
             case 3 -> {Archivos.agregarArchivo();}
             case 4 -> {Archivos.eliminarArchivo();}
             case 5 -> {Archivos.agregarFavorito();}
+            case 6 -> {System.out.println("-----------");}
             default -> {System.out.println("Opción invalida");}
         }
     }
