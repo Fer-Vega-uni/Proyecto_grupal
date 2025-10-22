@@ -10,12 +10,12 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Archivos {
+public class ControladorArchivos {
 
-    private static ArrayList<String> archivos = new ArrayList<>();
+    private  ArrayList<String> archivos = new ArrayList<>();
     public static Scanner scan = new Scanner(System.in);
 
-    static {archivos.add("lineal.pdf");
+    {archivos.add("lineal.pdf");
             archivos.add("multi.pdf");
             archivos.add("aaaaa.pdf");
             archivos.add("edo.pdf");}
@@ -57,7 +57,7 @@ public class Archivos {
             return Collections.emptyList();}
         System.out.println("Buscando archivos en: " + rutaPadre);
         try (Stream<Path> stream = Files.list(rutaPadre)){
-            return stream.filter(Files::isRegularFile).filter(path -> path.toString().toLowerCase().endsWith(".pdf")).map(Path::toString).collect(Collectors.toList());
+            return stream.filter(Files::isRegularFile).map(Path::toString).filter(string -> string.toLowerCase().endsWith(".pdf")).collect(Collectors.toList());
         } catch (IOException e){
             System.err.println("Error al listar archivos: " + e.getMessage());
             return Collections.emptyList();
@@ -79,13 +79,13 @@ public class Archivos {
         }
     }
 
-    public static void verArchivos(){
+    public void verArchivos(){
         for (String a:archivos){
             System.out.println(a);
         }
 
     }
-    public static void buscarArchivos(){
+    public void buscarArchivos(){
         System.out.println("Ingrese el nombre del archivo a buscar");
         String nombreArchivo=scan.nextLine();
         for (String a:archivos){
@@ -99,7 +99,7 @@ public class Archivos {
         System.out.println("No se encontraron coincidencias");
     }
 
-    public static void agregarArchivo(){
+    public void agregarArchivo(){
         System.out.println("Ingrese el nombre del archivo a subir ");
         String arch= scan.nextLine();
         if (arch.contains(".pdf")){
@@ -107,7 +107,7 @@ public class Archivos {
         } else {archivos.add(arch+".pdf");}
     }
 
-    public static void eliminarArchivo(){
+    public void eliminarArchivo(){
         System.out.println("Ingrese el nombre del archivo a borrar ");
         String arch= scan.nextLine();
         if (!(arch.contains(".pdf"))){ arch += ".pdf";}
@@ -118,15 +118,8 @@ public class Archivos {
         } else{System.out.println("No se encontraron coincidencias");}
     }
 
-    public static void agregarFavorito(){
-        System.out.println("Ingrese el nombre del archivo a añadir a favoritos");
-        String arch= scan.nextLine();
-        if (!(arch.contains(".pdf"))){ arch += ".pdf";}
-        if (archivos.contains(arch)){
-            System.out.println("Coincidencia encontrada");
-            System.out.println(arch);
-            Usuario.editarFavoritos(arch);
-        } else{System.out.println("No se encontraron coincidencias");}
-    }
+    public void agregarFavorito(){
+        //voy a cambiar este métoodo por completo
+        }
 
 }

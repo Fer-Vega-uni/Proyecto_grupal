@@ -3,6 +3,7 @@ import java.util.Scanner;
 public class Menu {
     public static int opcion = 0;
     public static Scanner scan = new Scanner(System.in);
+    private static final ControladorArchivos archivos =new ControladorArchivos();
 
     public static void main(String[] args) {
         //No voy a emular el login aca, ya que eso ya está hecho he implementado en la versión gráfica :)
@@ -35,13 +36,13 @@ public class Menu {
 
     public static void seleccionarOpcion(int opcion) {
         switch (opcion) {
-            case 1 -> {Archivos.verArchivos();}
-            case 2 -> {                Archivos.buscarArchivos();}
-            case 3 -> {Archivos.agregarArchivo();}
-            case 4 -> {Archivos.eliminarArchivo();}
-            case 5 -> {Archivos.agregarFavorito();}
-            case 6 -> {System.out.println("-----------");}
-            default -> {System.out.println("Opción invalida");}
+            case 1 -> archivos.verArchivos();
+            case 2 -> archivos.buscarArchivos();
+            case 3 -> archivos.agregarArchivo();
+            case 4 -> archivos.eliminarArchivo();
+            case 5 -> archivos.agregarFavorito();
+            case 6 -> System.out.println("-----------");
+            default -> System.out.println("Opción invalida");
         }
     }
 }
