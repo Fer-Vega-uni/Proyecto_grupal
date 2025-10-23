@@ -3,22 +3,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ControladorArchivos {
 
-    private  ArrayList<String> archivos = new ArrayList<>();
-    public static Scanner scan = new Scanner(System.in);
+    private Scanner scan = new Scanner(System.in);
+    private final String rutaBase= "/Escritorio/probando/proyecto final progra/"; //esta era la ruta en mi local... se cambiará cuando ya implementemos lo de un servidor
+    private ArrayList<String> favoritos = new ArrayList<>();
+    private String carpetaActual = "No hay carpeta Seleccionada";
 
-    {archivos.add("lineal.pdf");
-            archivos.add("multi.pdf");
-            archivos.add("aaaaa.pdf");
-            archivos.add("edo.pdf");}
 
 
     public boolean verificarExistenciaCarpeta(String rutaString){
@@ -26,8 +21,9 @@ public class ControladorArchivos {
         return Files.exists(ruta) && Files.isDirectory(ruta);
     }
 
-    public void crearCarpeta(String rutaString){
-        Path ruta = Paths.get(rutaString);
+    public void crearCarpeta(){
+        System.out.println("Ingrese el nombre de la carpeta a crear");
+        Path ruta = Paths.get(rutaBase).resolve(scan.nextLine());
         try {
             Files.createDirectories(ruta);
             System.out.println("Carpeta creada o ya en existencia: " + ruta);
@@ -35,6 +31,8 @@ public class ControladorArchivos {
             System.err.println("Error al crear la carpeta: " + e.getMessage());
         }
     }
+
+    public void mostrarCarpetaActual(){System.out.println("Carpeta actual: " + carpetaActual);}
 
     public List<String> buscarSubcarpetas (String carpetaPadre) {
         Path rutaPadre = Paths.get(carpetaPadre);
@@ -50,23 +48,32 @@ public class ControladorArchivos {
             return Collections.emptyList();
         }}
 
-    public List<String> buscarArchivos(String carpetaPadre) {
-        Path rutaPadre = Paths.get(carpetaPadre);
-        if (!verificarExistenciaCarpeta(carpetaPadre)){
-            System.err.println("La capreta padre no existe: " + carpetaPadre);
-            return Collections.emptyList();}
-        System.out.println("Buscando archivos en: " + rutaPadre);
+    public List<String> buscarArchivos() {
+        Path rutaPadre = Paths.get(rutaBase).resolve(carpetaActual);
+        System.out.println("Buscando archivos en: " + carpetaActual);
         try (Stream<Path> stream = Files.list(rutaPadre)){
-            return stream.filter(Files::isRegularFile).map(Path::toString).filter(string -> string.toLowerCase().endsWith(".pdf")).collect(Collectors.toList());
+            return stream.filter(Files::isRegularFile).filter(path -> path.toString().toLowerCase().endsWith(".pdf")).map(Path::toString).collect(Collectors.toList());
         } catch (IOException e){
             System.err.println("Error al listar archivos: " + e.getMessage());
             return Collections.emptyList();
         }
     }
 
-    public void copiarArchivo(String archivoOrigen, String carpetaDestino) {
-        Path origen = Paths.get(archivoOrigen);
-        Path destino = Paths.get(carpetaDestino);
+    public void cambiarCarpetaActual() {
+        System.out.println("Escriba el nombre de la carpeta: ");
+        String nombreCarpeta =scan.nextLine();
+        Path nuevaRuta = Paths.get(rutaBase).resolve(nombreCarpeta);
+        if (verificarExistenciaCarpeta(nuevaRuta.toString())){
+            carpetaActual=nombreCarpeta;
+            System.out.println("Cambiando a carpeta: " + carpetaActual);
+        } else {System.err.println("La carpeta '"+nombreCarpeta+"' no existe.");}
+    }
+
+    public void copiarArchivo() {
+        System.out.println("Ingrese el nombre del archivo a copiar");
+        Path origen = Paths.get(rutaBase).resolve(carpetaActual).resolve(scan.nextLine());
+        System.out.println("Ingrese la carpeta a la que irá el archivo: ");
+        Path destino = Paths.get(rutaBase).resolve(scan.nextLine());
         if (!Files.exists(origen)|| !Files.isRegularFile(origen)){
             System.err.println("El archivo de origen no existe" + origen);
             return;
@@ -75,51 +82,52 @@ public class ControladorArchivos {
             Files.copy(origen,deestinoFinal, StandardCopyOption.REPLACE_EXISTING);
             System.out.println("Archivo copiado exitosamente a: " + deestinoFinal);
         } catch (IOException e) {
-            System.out.println("Error al copiar el archivo: " + e.getMessage());
+            System.err.println("Error al copiar el archivo: " + e.getMessage());
         }
     }
 
     public void verArchivos(){
+        List<String> archivos= buscarArchivos();
+        if (archivos.isEmpty()){System.out.println("No se encontaron archivos en esta carpeta"); return;}
+        int cont=1;
         for (String a:archivos){
-            System.out.println(a);
+            System.out.println(cont+".-"+Paths.get(a).getFileName().toString());
+            cont++;
         }
 
-    }
-    public void buscarArchivos(){
-        System.out.println("Ingrese el nombre del archivo a buscar");
-        String nombreArchivo=scan.nextLine();
-        for (String a:archivos){
-            String archivo = a.split("\\.")[0];
-            if (archivo.contains(nombreArchivo.trim().split("\\.")[0])){
-                System.out.println("Coincidencia encontrada");
-                System.out.println(a);
-                return;
-            }
-        }
-        System.out.println("No se encontraron coincidencias");
+
     }
 
     public void agregarArchivo(){
-        System.out.println("Ingrese el nombre del archivo a subir ");
-        String arch= scan.nextLine();
-        if (arch.contains(".pdf")){
-            archivos.add(arch);
-        } else {archivos.add(arch+".pdf");}
+        //aquí va a ir el tema de enviar un archivo a Gemini, que sigue en proceso desafortunadamente
     }
 
     public void eliminarArchivo(){
-        System.out.println("Ingrese el nombre del archivo a borrar ");
-        String arch= scan.nextLine();
-        if (!(arch.contains(".pdf"))){ arch += ".pdf";}
-        if (archivos.contains(arch)){
-            System.out.println("Coincidencia encontrada");
-            System.out.println(arch);
-            archivos.remove(arch);
-        } else{System.out.println("No se encontraron coincidencias");}
+        //
     }
 
     public void agregarFavorito(){
-        //voy a cambiar este métoodo por completo
+        System.out.println("Ingrese el nombre del archivo a añadir a favoritos: ");
+
         }
+
+    public int leerOpcion( int limiteInf, int limiteSup){
+        int opcion;
+        while (true){
+            try {
+                System.out.println("Ingrese una opción");
+                opcion = scan.nextInt();
+                scan.nextLine();
+                if (opcion >= limiteInf && opcion <= limiteSup) {
+                    return opcion;
+                } else { System.err.println("Ingrese un número valido");}
+            } catch (Exception e) {
+                System.err.println("Ingrese un número valido");
+                scan.nextLine();
+            }
+        }
+
+    }
+
 
 }
