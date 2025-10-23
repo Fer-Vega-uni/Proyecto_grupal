@@ -6,11 +6,11 @@ import java.awt.event.ActionListener;
 
 public class Herramientas {
 
-    public JLabel crearLabels(int letra, String Texto, int x, int y, int largo, int alto, Color color) {
+    //ya hace falta los colores pablo XD
+    public JLabel crearLabels(int letra, String Texto, int x, int y, int largo, int alto) {
         JLabel label = new JLabel(Texto);
         label.setBounds(x, y, largo, alto);
         label.setFont(new Font("Arial", Font.BOLD, letra));
-        label.setForeground(color);
         return label;
     }
 
@@ -28,10 +28,9 @@ public class Herramientas {
         return clave;
     }
 
-    public JButton crearBoton(Color colorFondo, Color colorLetra, String Texto, int x, int y, int largo, int alto, ActionListener accion) {
+    //ya no hace falta los coleres
+    public JButton crearBoton(String Texto, int x, int y, int largo, int alto, ActionListener accion) {
         JButton boton = new JButton(Texto);
-        boton.setBackground(colorFondo);
-        boton.setForeground(colorLetra);
         boton.setBounds(x, y, largo, alto);
         boton.setFont(new Font("Arial", Font.BOLD, 14));
         boton.setFocusPainted(false);
@@ -41,15 +40,16 @@ public class Herramientas {
 
     //creo que no estaba subido al develop porque al hacer "git pull origin develop" para que este lo actualizado no salia, pero segun pablo lo subio
     public JLabel crearImagen(String ruta, int x, int y, int largo, int alto) {
-        ImageIcon icon = new ImageIcon(getClass().getResource(ruta));
+        String path = System.getProperty("user.dir") + ruta;
+        ImageIcon icon = new ImageIcon(path);
         Image img = icon.getImage().getScaledInstance(largo, alto, Image.SCALE_SMOOTH);
-        icon = new ImageIcon(img);
-        JLabel imagen = new JLabel(icon);
+        JLabel imagen = new JLabel(new ImageIcon(img));
         imagen.setBounds(x, y, largo, alto);
         return imagen;
     }
 
     public Image getIcono() {
-        return new ImageIcon(getClass().getResource("/Recursos/Logo_SCA.png")).getImage();
+        String path = System.getProperty("user.dir") + "/Recursos/Logo_SCA.png";
+        return new ImageIcon(path).getImage();
     }
 }

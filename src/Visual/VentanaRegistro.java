@@ -9,6 +9,7 @@ import java.awt.*;
 public class VentanaRegistro {
     private final JFrame frameRegistro = new JFrame("Registro - SCA");
     private final Herramientas herramientas = new Herramientas();
+    private final Tema tema = Tema.getModo();
     private SesionController sesion;
 
     private JLabel lblMatricula;
@@ -30,16 +31,15 @@ public class VentanaRegistro {
         frameRegistro.setSize(700, 350);
         frameRegistro.setLocationRelativeTo(null);
         frameRegistro.setLayout(null);
-        frameRegistro.getContentPane().setBackground(new Color(199, 236, 252));
         frameRegistro.setIconImage(herramientas.getIcono());
         frameRegistro.setResizable(false);
     }
 
     private void labelsRegistro() {
-        lblMatricula = herramientas.crearLabels(15, "Matricula", 250, 30, 170, 25,Color.BLACK);
-        lblContraseña = herramientas.crearLabels(15, "Contraseña", 250, 80, 100, 25,Color.BLACK);
-        lblNombre = herramientas.crearLabels(15, "Nombre", 250, 130, 170, 25, Color.BLACK);
-        lblCarrera = herramientas.crearLabels(15, "Carrera", 250, 180, 170, 25,Color.BLACK);
+        lblMatricula = herramientas.crearLabels(15, "Matricula", 250, 30, 170, 25);
+        lblContraseña = herramientas.crearLabels(15, "Contraseña", 250, 80, 100, 25);
+        lblNombre = herramientas.crearLabels(15, "Nombre", 250, 130, 170, 25);
+        lblCarrera = herramientas.crearLabels(15, "Carrera", 250, 180, 170, 25);
     }
 
     private void txtRegistro() {
@@ -50,10 +50,8 @@ public class VentanaRegistro {
     }
 
     private void btnRegistro() {
-        btnRegistrar = herramientas.crearBoton(new Color(1, 53, 110),Color.WHITE ,"Registrar", 210, 245, 120, 25, e -> verificarRegistro());
-        btnVolver = herramientas.crearBoton(new Color(1, 53, 110),Color.WHITE ,"Volver", 360, 245, 120, 25, e -> volverLogin());
-
-
+        btnRegistrar = herramientas.crearBoton("Registrar", 210, 245, 120, 25, e -> verificarRegistro());
+        btnVolver = herramientas.crearBoton("Volver", 360, 245, 120, 25, e -> volverLogin());
     }
 
     private void imaRegistro() {
@@ -66,6 +64,7 @@ public class VentanaRegistro {
         txtRegistro();
         btnRegistro();
         imaRegistro();
+        aplicartema();
 
         frameRegistro.add(lblMatricula);
         frameRegistro.add(txtMatricula);
@@ -111,5 +110,10 @@ public class VentanaRegistro {
                     "Error al registrar",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void aplicartema() {
+        frameRegistro.getContentPane().setBackground(tema.getFondo());
+        lblMatricula.setForeground(tema.getTexto());
     }
 }

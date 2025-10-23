@@ -9,6 +9,7 @@ import java.awt.*;
 public class VentanaLogin {
     private final JFrame frameLogin = new JFrame("Login - SCA");
     private final Herramientas herramientas = new Herramientas();
+    private final Tema tema = Tema.getModo();
     private SesionController sesion;
 
     private JLabel labelMatricula;
@@ -17,6 +18,7 @@ public class VentanaLogin {
     private JPasswordField txtContraseña;
     private JButton btnIngresar;
     private JButton btnRegistrar;
+    private JButton btnModo;
     private JLabel imaUFRO;
     private JLabel imaSCA;
 
@@ -26,14 +28,13 @@ public class VentanaLogin {
         frameLogin.setSize(700, 350);
         frameLogin.setLocationRelativeTo(null);
         frameLogin.setLayout(null);
-        frameLogin.getContentPane().setBackground(new Color(199, 236, 252));
         frameLogin.setIconImage(herramientas.getIcono());
         frameLogin.setResizable(false);
     }
 
     private void labelsLogin() {
-        labelMatricula = herramientas.crearLabels(14, "Matricula", 250, 120, 170, 25,Color.BLACK);
-        labelContraseña = herramientas.crearLabels(14, "Contraseña", 250, 170, 100, 25, Color.BLACK);
+        labelMatricula = herramientas.crearLabels(14, "Matricula", 250, 120, 170, 25);
+        labelContraseña = herramientas.crearLabels(14, "Contraseña", 250, 170, 100, 25);
     }
 
     private void textosLogin() {
@@ -42,8 +43,9 @@ public class VentanaLogin {
     }
 
     private void botonesLogin() {
-            btnIngresar = herramientas.crearBoton(new Color(1, 53, 110),Color.WHITE ,"Ingresar",210, 235, 120, 25, e -> verificarIngreso());
-        btnRegistrar = herramientas.crearBoton(new Color(1, 53, 110),Color.WHITE,"Registrar", 360, 235, 120, 25, e -> mostrarRegistro());
+        btnIngresar = herramientas.crearBoton( "Ingresar",210, 235, 120, 25, e -> verificarIngreso());
+        btnRegistrar = herramientas.crearBoton("Registrar", 360, 235, 120, 25, e -> mostrarRegistro());
+        btnModo = herramientas.crearBoton("Tema", 570, 10, 100, 25, e -> cambiarTema());
     }
 
     private void imaLogin() {
@@ -56,6 +58,7 @@ public class VentanaLogin {
         textosLogin();
         botonesLogin();
         imaLogin();
+        aplicarTema();
 
 
         frameLogin.add(labelMatricula);
@@ -64,6 +67,7 @@ public class VentanaLogin {
         frameLogin.add(txtContraseña);
         frameLogin.add(btnIngresar);
         frameLogin.add(btnRegistrar);
+        frameLogin.add(btnModo);
         frameLogin.add(imaUFRO);
         frameLogin.add(imaSCA);
 
@@ -93,5 +97,25 @@ public class VentanaLogin {
             JOptionPane.showMessageDialog(frameLogin, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
+    private void cambiarTema() {
+        tema.alternarTema();
+        aplicarTema();
+    }
+
+    private void aplicarTema() {
+        frameLogin.getContentPane().setBackground(tema.getFondo());
+        labelMatricula.setForeground(tema.getTexto());
+        labelContraseña.setForeground(tema.getTexto());
+        btnIngresar.setBackground(tema.getBoton());
+        btnIngresar.setForeground(tema.getBotonTexto());
+        btnRegistrar.setBackground(tema.getBoton());
+        btnRegistrar.setForeground(tema.getBotonTexto());
+        btnModo.setBackground(tema.getBoton());
+        btnModo.setForeground(tema.getBotonTexto());
+        frameLogin.repaint();
+    }
+
+
 
 }
