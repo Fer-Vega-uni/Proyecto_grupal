@@ -52,4 +52,12 @@ public class Herramientas {
         String path = System.getProperty("user.dir") + "/Recursos/Logo_SCA.png";
         return new ImageIcon(path).getImage();
     }
+
+    public JPanel crearPanel(Color color, int x, int y, int ancho, int alto) {
+        JPanel panel = new JPanel();
+        panel.setLayout(null);
+        panel.setBackground(color);
+        panel.setBounds(x, y, ancho, alto);
+        return panel;
+    }
 }
