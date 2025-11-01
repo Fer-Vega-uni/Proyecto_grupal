@@ -94,7 +94,8 @@ public class VentanaLogin {
 
                 frameLogin.dispose();
 
-                new VentanaMain(sesion);
+               VentanaMain Main = new VentanaMain(sesion);
+               Main.mostrarVentanaMain();
 
             } else {
                 JOptionPane.showMessageDialog(frameLogin,
