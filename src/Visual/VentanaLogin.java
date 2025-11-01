@@ -87,16 +87,30 @@ public class VentanaLogin {
 
         try {
             if (sesion.iniciarSesion(n, c)) {
-                JOptionPane.showMessageDialog(frameLogin, "Bienvenido " + sesion.getUsuarioActual().getNombre(), "Login correcto", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(frameLogin,
+                        "Bienvenido " + sesion.getUsuarioActual().getNombre(),
+                        "Login correcto",
+                        JOptionPane.INFORMATION_MESSAGE);
+
                 frameLogin.dispose();
 
+               VentanaMain Main = new VentanaMain(sesion);
+               Main.mostrarVentanaMain();
+
             } else {
-                JOptionPane.showMessageDialog(frameLogin, "Matricula y/o clave incorrectos", "Intente nuevamente", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frameLogin,
+                        "Matricula y/o clave incorrectos",
+                        "Intente nuevamente",
+                        JOptionPane.ERROR_MESSAGE);
             }
         } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(frameLogin, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frameLogin,
+                    ex.getMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private void cambiarTema() {
         tema.alternarTema();
@@ -115,7 +129,4 @@ public class VentanaLogin {
         btnModo.setForeground(tema.getBotonTexto());
         frameLogin.repaint();
     }
-
-
-
 }
