@@ -6,14 +6,35 @@ import Controladores.SesionController;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Ventana principal del sistema SCA (Sistema de Carpeta Académica).
+ * <p>
+ * Permite al usuario navegar por sus unidades personales y asignaturas, visualizar
+ * archivos disponibles y acceder al menú lateral con opciones de personalización,
+ * subida de archivos y cierre de sesión.
+ * </p>
+ * <p>
+ * Esta clase integra controladores de sesión ({@link SesionController}) y archivos
+ * ({@link ArchivosController}), junto con la configuración visual proporcionada por
+ * {@link Tema} y {@link Herramientas}.
+ * </p>
+ *
+ * @author Marcelo Orellana - [@morellana09-dotcom]
+ * @version 1.0
+ */
 public class VentanaMain {
-
+    /** Ventana principal del sistema. */
     private final JFrame frameMain = new JFrame("Main - SCA");
+    /** Utilidad para crear componentes gráficos preconfigurados. */
     private final Herramientas herramientas = new Herramientas();
+    /** Tema visual actual (claro u oscuro). */
     private final Tema tema = Tema.getModo();
+    /** Controlador encargado de la gestión de archivos. */
     private final ArchivosController archivosController = new ArchivosController();
+    /** Controlador de sesión que gestiona el usuario autenticado. */
     private final SesionController sesion;
 
+    // Componentes principales
     private JLayeredPane capas;
     private JPanel panelIzquierdo;
     private JPanel panelCentral;
@@ -30,11 +51,17 @@ public class VentanaMain {
     private JButton btnMenuCerrarSesion;
     private JButton btnVolverUnidad;
 
+    // Propiedades de animación y control del menú
     private boolean menuVisible = false;
     private Timer animacionMenu;
     private int anchoMenu = 300;
     private int velocidad = 10;
 
+    /**
+     * Constructor de la ventana principal.
+     *
+     * @param sesion controlador de sesión que contiene los datos del usuario autenticado
+     */
     public VentanaMain(SesionController sesion) {
         this.sesion = sesion;
 
@@ -46,6 +73,10 @@ public class VentanaMain {
         frameMain.setIconImage(herramientas.getIcono());
     }
 
+    /**
+     * Crea y configura los paneles principales de la interfaz:
+     * lateral izquierdo, central y menú lateral derecho.
+     */
     private void panelesMain() {
         capas = new JLayeredPane();
         capas.setBounds(0, 0, 1200, 800);
@@ -63,6 +94,10 @@ public class VentanaMain {
         contenidoPanelDerecho();
     }
 
+    /**
+     * Crea y configura las etiquetas principales de la ventana, incluyendo la bienvenida,
+     * el título de la unidad personal y la sección de asignaturas.
+     */
     private void labelsMain() {
         lblBienvenida = herramientas.crearLabels(48, "Bienvenid@ a SCA", 470, 25, 800, 55);
         lblBienvenida.setForeground(tema.getBotonTexto());
@@ -80,6 +115,12 @@ public class VentanaMain {
         mostrarArchivosUnidad(nombreUsuario);
     }
 
+    /**
+     * Genera los botones de navegación de asignaturas y el botón del menú lateral.
+     * <p>
+     * Si no hay asignaturas registradas, muestra un mensaje informativo.
+     * </p>
+     */
     private void botonesMain() {
         btnMenuDerecho = herramientas.crearBoton("☰", 1100, 15, 80, 60, e -> toggleMenu());
         btnMenuDerecho.setFont(new Font("Segoe UI Symbol", Font.BOLD, 30));
@@ -87,9 +128,7 @@ public class VentanaMain {
         btnMenuDerecho.setFocusPainted(false);
         btnMenuDerecho.setBorderPainted(false);
         btnMenuDerecho.setContentAreaFilled(false);
-        frameMain.add(btnMenuDerecho);
-
-
+        capas.add(btnMenuDerecho, Integer.valueOf(3));
 
         String[] asignaturas = archivosController.listarAsignaturas();
         if (asignaturas.length == 0) {
@@ -127,6 +166,9 @@ public class VentanaMain {
         }
     }
 
+    /**
+     * Configura el saludo y la información del usuario en el menú lateral derecho.
+     */
     private void labelsMenuSaludo() {
         String nombre = sesion.getUsuarioActual().getNombre();
         String carrera = sesion.getUsuarioActual().getCarrera();
@@ -146,6 +188,10 @@ public class VentanaMain {
         panelDerecho.add(lblMenuCarrera);
     }
 
+    /**
+     * Configura los botones del menú lateral derecho:
+     * volver a unidad, cambiar tema, subir archivo y cerrar sesión.
+     */
     private void botonesMenuOpciones() {
         btnVolverUnidad = herramientas.crearBoton("Volver a Mi Unidad", 40, 500, 200, 40, e -> mostrarUnidadPersonal());
         estiloBotonLateral(btnVolverUnidad);
@@ -174,11 +220,19 @@ public class VentanaMain {
         panelDerecho.add(btnMenuCerrarSesion);
     }
 
+    /**
+     * Inicializa el contenido del panel lateral derecho (saludo y opciones).
+     */
     private void contenidoPanelDerecho() {
         labelsMenuSaludo();
         botonesMenuOpciones();
     }
 
+    /**
+     * Aplica un estilo común a los botones del menú lateral derecho.
+     *
+     * @param boton botón a personalizar
+     */
     private void estiloBotonLateral(JButton boton) {
         boton.setBackground(tema.getBoton());
         boton.setForeground(Color.WHITE);
@@ -199,6 +253,9 @@ public class VentanaMain {
         });
     }
 
+    /**
+     * Muestra u oculta el menú lateral derecho mediante una animación.
+     */
     private void toggleMenu() {
         if (animacionMenu != null && animacionMenu.isRunning()) return;
         menuVisible = !menuVisible;
@@ -218,6 +275,11 @@ public class VentanaMain {
         animacionMenu.start();
     }
 
+    /**
+     * Muestra los archivos personales del usuario en el panel central.
+     *
+     * @param nombreUsuario nombre del usuario cuya carpeta se va a mostrar
+     */
     private void mostrarArchivosUnidad(String nombreUsuario) {
         String[] archivos = archivosController.listarUnidadUsuario(nombreUsuario);
         int y = 50;
@@ -236,6 +298,11 @@ public class VentanaMain {
         }
     }
 
+    /**
+     * Muestra los archivos de una asignatura específica en el panel central.
+     *
+     * @param nombre nombre de la asignatura seleccionada
+     */
     private void mostrarAsignatura(String nombre) {
         panelCentral.removeAll();
 
@@ -278,6 +345,9 @@ public class VentanaMain {
         panelCentral.repaint();
     }
 
+    /**
+     * Muestra la ventana principal del sistema completamente configurada.
+     */
     public void mostrarVentanaMain() {
         panelesMain();
         labelsMain();
@@ -287,6 +357,9 @@ public class VentanaMain {
         panelDerecho.setLocation(1200, 0);
     }
 
+    /**
+     * Restaura el panel central mostrando la carpeta personal del usuario.
+     */
     private void mostrarUnidadPersonal() {
         panelCentral.removeAll();
         String nombreUsuario = sesion.getUsuarioActual().getNombre();
@@ -301,6 +374,9 @@ public class VentanaMain {
         panelCentral.repaint();
     }
 
+    /**
+     * Aplica el tema visual actual a los paneles, etiquetas y botones de la interfaz.
+     */
     private void aplicarTema() {
         frameMain.getContentPane().setBackground(tema.getBoton());
         panelCentral.setBackground(tema.getFondo());
@@ -324,11 +400,19 @@ public class VentanaMain {
         frameMain.repaint();
     }
 
+    /**
+     * Actualiza el color de fondo y texto de un botón según el tema activo.
+     *
+     * @param boton botón a actualizar
+     */
     private void actualizarColorBoton(JButton boton) {
         boton.setBackground(tema.getBoton());
         boton.setForeground(tema.getBotonTexto());
     }
 
+    /**
+     * Actualiza el color de todas las etiquetas contenidas en el panel central.
+     */
     private void actualizarLabelsPanelCentral() {
         for (Component comp : panelCentral.getComponents()) {
             if (comp instanceof JLabel label) {
