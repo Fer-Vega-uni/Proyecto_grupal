@@ -34,7 +34,7 @@ public class SesionController {
         UsuarioActual = null;
 
         USUARIOS.add(new Usuario("Marcelo", "1234", "22074033124", "Ing. Civil Informatica"));
-        USUARIOS.add(new Usuario("Fernanda", "1234", "21876574224", "Ing. Civil Informatica"));
+        USUARIOS.add(new Usuario("Fernanda", "1234", "", "Ing. Civil Informatica"));
         USUARIOS.add(new Usuario("Pablo", "1234", "22162796224", "Ing. Civil Informatica"));
 
     }
