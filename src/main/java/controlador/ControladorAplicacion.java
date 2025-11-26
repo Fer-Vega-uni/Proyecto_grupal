@@ -20,9 +20,9 @@ public class ControladorAplicacion {
         int opcion;
         do {
             vista.mostrarMenu(modelo.getRutaCompletaActual());
-            opcion=vista.leerOpcion(1,7);
+            opcion=vista.leerOpcion(1,8);
             seleccionarOpcion(opcion);
-        } while (opcion!=7);
+        } while (opcion!=8);
     }
 
     private void seleccionarOpcion(int opcion){
@@ -34,11 +34,11 @@ public class ControladorAplicacion {
                 case 4 -> cambiarCarpeta();
                 case 5 -> agregarFavorito();
                 case 6 -> copiarArchivo();
-                case 7 -> vista.mostrarMensaje("Saliendo...");
+                case 7 -> subirArchivoIA();
+                case 8 -> vista.mostrarMensaje("Saliendo...");
             }
         } catch (Exception e){vista.mostrarError(e.getMessage());}
     }
-    //boolean:agregarfav copiararch cambiarcarpeta crearcarpeta
 
     private void verArchivos() throws IOException{
         List<String> archivos =modelo.buscarArchivosPdf();
@@ -75,6 +75,14 @@ public class ControladorAplicacion {
         String destino = vista.leerTexto("Ingrese la carpeta de destino");
         if (!modelo.copiarArchivo(archivo,destino)){vista.mostrarError("Archivo o carpeta no localizados.");
         }else{vista.mostrarMensaje("Archivo copiado exitosamente.");}
+    }
+
+    private void subirArchivoIA(){
+        vista.mostrarMensaje("\n--- SUBIDA INTELIGENTE ---");
+        String rutaArchivo = vista.leerTexto("Pegue la ruta COMPLETA del archivo PDF en su PC");
+        vista.mostrarMensaje("Analizando documento con Gemini AI... (Esto toma unos segundos)");
+        String resultado = modelo.agregarArchivoConIA(rutaArchivo);
+        vista.mostrarMensaje(resultado);
     }
 
 

@@ -86,12 +86,48 @@ public class GestorArchivos {
 
     public List<String> getFavoritos(){return favoritos;}
 
-    public void agregarArchivo(){
-        //aquí va a ir el tema de enviar un archivo a Gemini, que sigue en proceso desafortunadamente
+    public String agregarArchivoConIA(String rutaOrigenString) {
+        Path rutaOrigen = Paths.get(rutaOrigenString);
+        if (!Files.exists(rutaOrigen)) return "Error: El archivo no existe.";
+        if (!rutaOrigen.toString().toLowerCase().endsWith(".pdf")) return "Error: Solo archivos PDF.";
+
+        try {
+            AnalisisIA servicioIA = new AnalisisIA();
+            String respuestaRaw = servicioIA.analizarArchivo(rutaOrigen);
+
+            // --- INICIO DE CODIGO DE DEBUG (Solo para pruebas) ---
+            System.out.println("\n💀💀💀 DEBUG - LO QUE REALMENTE DIJO LA IA: 💀💀💀");
+            System.out.println("--------------------------------------------------");
+            System.out.println(respuestaRaw);
+            System.out.println("--------------------------------------------------\n");
+            // --- FIN DE CODIGO DE DEBUG ---
+
+            ResultadoAnalisisIA resultado = new ResultadoAnalisisIA(respuestaRaw);
+            if (resultado.esAprobado()) {
+                subirArchivoS3(rutaOrigen, resultado.getMateria());
+                return "Archivo APROBADO.\n Clasificado en: " + resultado.getMateria() + "\n Subido exitosamente.";
+            }
+            else if (resultado.esRechazado()) { return "Archivo RECHAZADO.\nMotivo: " + resultado.getRazon();}
+            else {return " Respuesta ambigua de la IA.";}
+        } catch (IOException e) {
+            return "Error de sistema al guardar el archivo: " + e.getMessage();
+        } catch (Exception e) {
+            return "Error inesperado: " + e.getMessage();
+        }
     }
 
     public void eliminarArchivo(){
         //
+    }
+
+    private void subirArchivoS3(Path origen, String materia) throws IOException {
+        //por ahora se ve así xq todavía no conecto a S3
+        Path carpetaMateria = Paths.get(rutaBase).resolve(materia);
+        if (!Files.exists(carpetaMateria)) {
+            Files.createDirectories(carpetaMateria);
+        }
+        Path destinoFinal = carpetaMateria.resolve(origen.getFileName());
+        Files.copy(origen, destinoFinal, StandardCopyOption.REPLACE_EXISTING);
     }
 
 }

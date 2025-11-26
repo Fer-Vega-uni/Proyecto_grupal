@@ -16,7 +16,8 @@ public class ConsolaVista {
         System.out.println("4. Cambiar Carpeta");
         System.out.println("5. Añadir Archivo a lista de favoritos");
         System.out.println("6. Copiar Archivo de la Carpeta actual a otra carpeta");
-        System.out.println("7. Salir");
+        System.out.println("7. Subir archivo con IA");
+        System.out.println("8. Salir");
     }
 
     public int leerOpcion( int limiteInf, int limiteSup){
