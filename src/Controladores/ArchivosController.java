@@ -1,17 +1,48 @@
 package Controladores;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class ArchivosController {
 
-    private final String rutaAsignaturas = System.getProperty("user.dir") + "/recursos/asignaturas";
-    private final String rutaUnidades = System.getProperty("user.dir") + "/Recursos/Unidades";
-
-
+    private final String rutaAsignaturas = System.getProperty("user.dir") + "/Recursos/asignaturas";
+    private final String rutaUnidades    = System.getProperty("user.dir") + "/Recursos/Unidades";
+    private final String rutaPendientes  = System.getProperty("user.dir") + "/Recursos/pendientes";
 
     public String getRutaAsignaturas() {
         return rutaAsignaturas;
     }
+
+    public File getCarpetaPendientes() {
+        File carpeta = new File(rutaPendientes);
+        if (!carpeta.exists()) {
+            carpeta.mkdirs();
+        }
+        return carpeta;
+    }
+
+    public File guardarEnPendientes(File archivoOrigen, String nombreUsuario) throws IOException {
+        File carpetaPendientes = getCarpetaPendientes();
+
+        String nombreOriginal = archivoOrigen.getName();
+        String extension = "";
+        int punto = nombreOriginal.lastIndexOf('.');
+        if (punto != -1) {
+            extension = nombreOriginal.substring(punto);
+            nombreOriginal = nombreOriginal.substring(0, punto);
+        }
+
+        String nombreLimpio = nombreOriginal.replaceAll("[^a-zA-Z0-9_\\-]", "_");
+        String nombreDestino = nombreLimpio + "_" + nombreUsuario + "_" + System.currentTimeMillis() + extension;
+
+        File destino = new File(carpetaPendientes, nombreDestino);
+        Files.copy(archivoOrigen.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        return destino;
+    }
+
 
     public String[] listarAsignaturas() {
         File carpeta = new File(rutaAsignaturas);
@@ -30,7 +61,6 @@ public class ArchivosController {
         return nombres;
     }
 
-
     public String[] listarArchivos(String asignatura) {
         File carpeta = new File(rutaAsignaturas + "/" + asignatura);
 
@@ -47,10 +77,10 @@ public class ArchivosController {
         }
         return nombres;
     }
+
     public File crearUnidadUsuario(String nombreUsuario) {
         File carpetaUsuario = new File(rutaUnidades + "/Unidad " + nombreUsuario);
 
-        // Si no existe, la crea
         if (!carpetaUsuario.exists()) {
             boolean creada = carpetaUsuario.mkdirs();
             if (creada) {
@@ -64,6 +94,7 @@ public class ArchivosController {
 
         return carpetaUsuario;
     }
+
     public String[] listarUnidadUsuario(String nombreUsuario) {
         File carpetaUsuario = crearUnidadUsuario(nombreUsuario);
         File[] archivos = carpetaUsuario.listFiles();
