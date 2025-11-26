@@ -43,12 +43,11 @@ public class VentanaSubirArchivo {
     }
 
     private void construirUI() {
-        // Panel base (similar al fondo de VentanaMain)
         panelBase = herramientas.crearPanel(tema.getBoton(), 0, 0, 600, 350);
         panelBase.setLayout(null);
         frame.add(panelBase);
 
-        // Panel central donde va el contenido, igual que panelCentral
+
         panelContenido = herramientas.crearPanel(tema.getFondo(), 30, 60, 540, 250);
         panelContenido.setLayout(null);
         panelBase.add(panelContenido);
