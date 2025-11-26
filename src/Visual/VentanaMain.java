@@ -90,7 +90,6 @@ public class VentanaMain {
         frameMain.add(btnMenuDerecho);
 
 
-
         String[] asignaturas = archivosController.listarAsignaturas();
         if (asignaturas.length == 0) {
             JLabel lblVacio = herramientas.crearLabels(20, "No hay asignaturas", 30, 90, 200, 25);
@@ -158,11 +157,11 @@ public class VentanaMain {
         estiloBotonLateral(btnMenuTema);
         panelDerecho.add(btnMenuTema);
 
-        btnMenuSubir = herramientas.crearBoton("Subir archivo", 40, 600, 200, 40, e ->
-                JOptionPane.showMessageDialog(frameMain,
-                        ";_; " ,
-                        "Aun no hecho....",
-                        JOptionPane.INFORMATION_MESSAGE));
+        btnMenuSubir = herramientas.crearBoton("Subir archivo", 40, 600, 200, 40, e -> {
+            VentanaSubirArchivo ventanaSubir =
+                    new VentanaSubirArchivo(sesion, archivosController, frameMain);
+            ventanaSubir.mostrar();
+        });
         estiloBotonLateral(btnMenuSubir);
         panelDerecho.add(btnMenuSubir);
 
@@ -173,6 +172,7 @@ public class VentanaMain {
         estiloBotonLateral(btnMenuCerrarSesion);
         panelDerecho.add(btnMenuCerrarSesion);
     }
+
 
     private void contenidoPanelDerecho() {
         labelsMenuSaludo();
@@ -314,7 +314,7 @@ public class VentanaMain {
         lblMenuNombre.setForeground(tema.getBotonTexto());
         lblMenuCarrera.setForeground(tema.getBotonTexto());
 
-       actualizarLabelsPanelCentral();
+        actualizarLabelsPanelCentral();
 
         actualizarColorBoton(btnVolverUnidad);
         actualizarColorBoton(btnMenuTema);
@@ -337,5 +337,3 @@ public class VentanaMain {
         }
     }
 }
-
-
