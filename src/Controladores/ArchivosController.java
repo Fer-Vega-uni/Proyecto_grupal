@@ -30,7 +30,7 @@ public class ArchivosController {
         String extension = "";
         int punto = nombreOriginal.lastIndexOf('.');
         if (punto != -1) {
-            extension = nombreOriginal.substring(punto);
+            extension = nombreOriginal.substring(punto); // incluye el punto
             nombreOriginal = nombreOriginal.substring(0, punto);
         }
 
@@ -42,6 +42,7 @@ public class ArchivosController {
 
         return destino;
     }
+
 
 
     public String[] listarAsignaturas() {
@@ -105,5 +106,30 @@ public class ArchivosController {
             nombres[i] = archivos[i].getName();
         }
         return nombres;
+    }
+
+
+
+    public boolean eliminarArchivoUnidadUsuario(String nombreUsuario, String nombreArchivo) {
+        File carpetaUsuario = crearUnidadUsuario(nombreUsuario);
+        File archivo = new File(carpetaUsuario, nombreArchivo);
+        return archivo.exists() && archivo.delete();
+    }
+
+
+    public boolean copiarDesdeAsignaturaAUnidad(String asignatura, String nombreArchivo, String nombreUsuario) {
+        File origen = new File(rutaAsignaturas + "/" + asignatura + "/" + nombreArchivo);
+        if (!origen.exists() || !origen.isFile()) return false;
+
+        File carpetaUsuario = crearUnidadUsuario(nombreUsuario);
+        File destino = new File(carpetaUsuario, nombreArchivo);
+
+        try {
+            Files.copy(origen.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
