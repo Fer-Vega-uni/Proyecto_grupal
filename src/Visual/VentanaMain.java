@@ -173,7 +173,6 @@ public class VentanaMain {
         panelDerecho.add(btnMenuCerrarSesion);
     }
 
-
     private void contenidoPanelDerecho() {
         labelsMenuSaludo();
         botonesMenuOpciones();
@@ -219,25 +218,80 @@ public class VentanaMain {
     }
 
     private void mostrarArchivosUnidad(String nombreUsuario) {
+        java.io.File carpetaUsuario = archivosController.crearUnidadUsuario(nombreUsuario);
+
         String[] archivos = archivosController.listarUnidadUsuario(nombreUsuario);
-        int y = 50;
+        int y = 60;
 
         if (archivos.length == 0) {
             JLabel lblVacio = herramientas.crearLabels(20, "Tu unidad está vacía.", 20, y, 400, 25);
             lblVacio.setForeground(tema.getTexto());
             panelCentral.add(lblVacio);
         } else {
-            for (String archivo : archivos) {
-                JLabel lblArchivo = herramientas.crearLabels(20, "• " + archivo, 120, y, 400, 25);
+            for (String nombreArchivo : archivos) {
+                final String archivoFinal = nombreArchivo;
+
+                JLabel lblArchivo = herramientas.crearLabels(15, "• " + archivoFinal, 40, y, 320, 25);
                 lblArchivo.setForeground(tema.getTexto());
+                lblArchivo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+                lblArchivo.addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseClicked(java.awt.event.MouseEvent e) {
+                        try {
+                            java.io.File archivo = new java.io.File(carpetaUsuario, archivoFinal);
+                            java.awt.Desktop.getDesktop().open(archivo);
+                        } catch (Exception ex) {
+                            JOptionPane.showMessageDialog(
+                                    frameMain,
+                                    "No se pudo abrir el archivo.",
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    }
+                });
                 panelCentral.add(lblArchivo);
-                y += 30;
+
+                JButton btnEliminar = herramientas.crearBoton("Eliminar", 480, y, 120, 25, e -> {
+                    int opcion = JOptionPane.showConfirmDialog(
+                            frameMain,
+                            "¿Seguro que quieres eliminar este archivo de tu unidad?\n" + archivoFinal,
+                            "Confirmar eliminación",
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    if (opcion == JOptionPane.YES_OPTION) {
+                        boolean ok = archivosController.eliminarArchivoUnidadUsuario(nombreUsuario, archivoFinal);
+                        if (ok) {
+                            JOptionPane.showMessageDialog(
+                                    frameMain,
+                                    "Archivo eliminado correctamente.",
+                                    "Eliminado",
+                                    JOptionPane.INFORMATION_MESSAGE
+                            );
+                            mostrarUnidadPersonal();
+                        } else {
+                            JOptionPane.showMessageDialog(
+                                    frameMain,
+                                    "No se pudo eliminar el archivo.",
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    }
+                });
+                actualizarColorBoton(btnEliminar);
+                panelCentral.add(btnEliminar);
+
+                y += 35;
             }
         }
     }
 
     private void mostrarAsignatura(String nombre) {
         panelCentral.removeAll();
+
+        String nombreUsuario = sesion.getUsuarioActual().getNombre();
+        String rutaCarpeta = System.getProperty("user.dir") + "/Recursos/asignaturas/" + nombre;
 
         JLabel lblTitulo = herramientas.crearLabels(40, nombre.toUpperCase(), 20, 10, 800, 50);
         lblTitulo.setForeground(tema.getTexto());
@@ -247,29 +301,53 @@ public class VentanaMain {
         lblInfo.setForeground(tema.getTexto());
         panelCentral.add(lblInfo);
 
-        String rutaCarpeta = System.getProperty("user.dir") + "/Recursos/asignaturas/" + nombre;
         String[] archivos = archivosController.listarArchivos(nombre);
-        int y = 90;
+        int y = 100;
 
         if (archivos.length == 0) {
             JLabel lblVacio = herramientas.crearLabels(14, "Carpeta vacía", 20, y, 300, 25);
             lblVacio.setForeground(tema.getTexto());
             panelCentral.add(lblVacio);
         } else {
-            for (String archivo : archivos) {
-                JLabel lblArchivo = herramientas.crearLabels(14, "• " + archivo, 20, y, 400, 25);
+            for (String nombreArchivo : archivos) {
+                JLabel lblArchivo = herramientas.crearLabels(14, "• " + nombreArchivo, 20, y, 320, 25);
                 lblArchivo.setForeground(tema.getTexto());
                 lblArchivo.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
                 lblArchivo.addMouseListener(new java.awt.event.MouseAdapter() {
                     @Override
                     public void mouseClicked(java.awt.event.MouseEvent e) {
                         try {
-                            java.awt.Desktop.getDesktop().open(new java.io.File(rutaCarpeta + "/" + archivo));
+                            java.awt.Desktop.getDesktop().open(
+                                    new java.io.File(rutaCarpeta + "/" + nombreArchivo)
+                            );
                         } catch (Exception ignored) {
                         }
                     }
                 });
                 panelCentral.add(lblArchivo);
+
+                JButton btnGuardar = herramientas.crearBoton("Guardar en Mi Unidad", 360, y - 2, 200, 25, e -> {
+                    boolean ok = archivosController.copiarDesdeAsignaturaAUnidad(nombre, nombreArchivo, nombreUsuario);
+                    if (ok) {
+                        JOptionPane.showMessageDialog(
+                                frameMain,
+                                "Archivo guardado en tu unidad personal.",
+                                "Guardado",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                frameMain,
+                                "No se pudo copiar el archivo.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+                });
+                actualizarColorBoton(btnGuardar);
+                panelCentral.add(btnGuardar);
+
                 y += 30;
             }
         }
@@ -315,6 +393,7 @@ public class VentanaMain {
         lblMenuCarrera.setForeground(tema.getBotonTexto());
 
         actualizarLabelsPanelCentral();
+        actualizarBotonesPanelCentral();
 
         actualizarColorBoton(btnVolverUnidad);
         actualizarColorBoton(btnMenuTema);
@@ -336,4 +415,14 @@ public class VentanaMain {
             }
         }
     }
+
+    private void actualizarBotonesPanelCentral() {
+        for (Component comp : panelCentral.getComponents()) {
+            if (comp instanceof JButton boton) {
+                actualizarColorBoton(boton);
+            }
+        }
+    }
 }
+
+
