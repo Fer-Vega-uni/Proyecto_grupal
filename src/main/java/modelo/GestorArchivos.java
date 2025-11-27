@@ -121,13 +121,14 @@ public class GestorArchivos {
     }
 
     private void subirArchivoS3(Path origen, String materia) throws IOException {
-        //por ahora se ve así xq todavía no conecto a S3
-        Path carpetaMateria = Paths.get(rutaBase).resolve(materia);
-        if (!Files.exists(carpetaMateria)) {
-            Files.createDirectories(carpetaMateria);
+        try {
+            S3Servicio servicio = new S3Servicio();
+            String urlNube = servicio.subirArchivo(origen,materia);
+            //para debug, dsps lo borro
+            System.out.println("funciona" + urlNube);
+        } catch (Exception e) {
+            
         }
-        Path destinoFinal = carpetaMateria.resolve(origen.getFileName());
-        Files.copy(origen, destinoFinal, StandardCopyOption.REPLACE_EXISTING);
-    }
+        }
 
 }
