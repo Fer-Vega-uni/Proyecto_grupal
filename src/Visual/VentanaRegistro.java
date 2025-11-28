@@ -115,5 +115,13 @@ public class VentanaRegistro {
     private void aplicartema() {
         frameRegistro.getContentPane().setBackground(tema.getFondo());
         lblMatricula.setForeground(tema.getTexto());
+        lblContraseña.setForeground(tema.getTexto());
+        lblCarrera.setForeground(tema.getTexto());
+        lblNombre.setForeground(tema.getTexto());
+        btnRegistrar.setBackground(tema.getBoton());
+        btnRegistrar.setForeground(tema.getBotonTexto());
+        btnVolver.setBackground(tema.getBoton());
+        btnVolver.setForeground(tema.getBotonTexto());
+        frameRegistro.repaint();
     }
 }

@@ -25,9 +25,7 @@ public class VentanaSubirArchivo {
     private JLabel lblEstado;
     private File archivoSeleccionado;
 
-    public VentanaSubirArchivo(SesionController sesion,
-                               ArchivosController archivosController,
-                               Frame padre) {
+    public VentanaSubirArchivo(SesionController sesion, ArchivosController archivosController, Frame padre) {
         this.sesion = sesion;
         this.archivosController = archivosController;
 
@@ -123,8 +121,7 @@ public class VentanaSubirArchivo {
 
     private void subirArchivo() {
         if (archivoSeleccionado == null) {
-            JOptionPane.showMessageDialog(frame,
-                    "Primero debes seleccionar un archivo PDF.",
+            JOptionPane.showMessageDialog(frame, "Primero debes seleccionar un archivo PDF.",
                     "Sin archivo",
                     JOptionPane.WARNING_MESSAGE);
             return;
