@@ -95,13 +95,6 @@ public class GestorArchivos {
             AnalisisIA servicioIA = new AnalisisIA();
             String respuestaRaw = servicioIA.analizarArchivo(rutaOrigen);
 
-            // --- INICIO DE CODIGO DE DEBUG (Solo para pruebas) ---
-            System.out.println("\n💀💀💀 DEBUG - LO QUE REALMENTE DIJO LA IA: 💀💀💀");
-            System.out.println("--------------------------------------------------");
-            System.out.println(respuestaRaw);
-            System.out.println("--------------------------------------------------\n");
-            // --- FIN DE CODIGO DE DEBUG ---
-
             ResultadoAnalisisIA resultado = new ResultadoAnalisisIA(respuestaRaw);
             if (resultado.esAprobado()) {
                 subirArchivoS3(rutaOrigen, resultado.getMateria());
@@ -110,25 +103,24 @@ public class GestorArchivos {
             else if (resultado.esRechazado()) { return "Archivo RECHAZADO.\nMotivo: " + resultado.getRazon();}
             else {return " Respuesta ambigua de la IA.";}
         } catch (IOException e) {
-            return "Error de sistema al guardar el archivo: " + e.getMessage();
+            throw  new RuntimeException("Error de sistema al guardar el archivo: " + e.getMessage());
         } catch (Exception e) {
-            return "Error inesperado: " + e.getMessage();
+            throw  new RuntimeException("Error inesperado: " + e.getMessage());
         }
     }
 
-    public void eliminarArchivo(){
-        //
-    }
 
     private void subirArchivoS3(Path origen, String materia) throws IOException {
         try {
             S3Servicio servicio = new S3Servicio();
-            String urlNube = servicio.subirArchivo(origen,materia);
+            String urlNube = servicio.subirArchivo(origen, materia);
             //para debug, dsps lo borro
-            System.out.println("funciona" + urlNube);
+            System.out.println("Debug Ruta archivo en S3:" + urlNube);
         } catch (Exception e) {
-            
+            throw new RuntimeException("Error inesperado: " + e.getMessage());
         }
-        }
+    }
+
+
 
 }
