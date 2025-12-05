@@ -121,6 +121,26 @@ public class GestorArchivos {
         }
     }
 
+    public void guardarArchivoTexto(String nombreArchivo, String contenido) throws IOException {
+        if (!verificarExistenciaCarpeta(rutaBase)) {
+            Files.createDirectories(Paths.get(rutaBase));
+        }
+        Path rutaArchivo = Paths.get(rutaBase).resolve(nombreArchivo);
+        Files.writeString(rutaArchivo, contenido);
+    }
+
+    public String leerArchivoTexto(String nombreArchivo) throws IOException {
+        Path rutaArchivo = Paths.get(rutaBase).resolve(nombreArchivo);
+        if (!Files.exists(rutaArchivo)) {
+            if (!verificarExistenciaCarpeta(rutaBase)) {
+                Files.createDirectories(Paths.get(rutaBase));
+            }
+            Files.createFile(rutaArchivo);
+            return "";
+        }
+        return Files.readString(rutaArchivo);
+    }
+
 
 
 }
