@@ -56,7 +56,6 @@ public class VentanaMain {
         panelDerecho = herramientas.crearPanel(tema.getBoton(), 1200, 0, anchoMenu, 800);
         panelDerecho.setLayout(null);
 
-
         capas.add(panelIzquierdo, Integer.valueOf(0));
         capas.add(panelCentral, Integer.valueOf(1));
         capas.add(panelDerecho, Integer.valueOf(2));
@@ -87,7 +86,7 @@ public class VentanaMain {
         btnMenuDerecho.setFocusPainted(false);
         btnMenuDerecho.setBorderPainted(false);
         btnMenuDerecho.setContentAreaFilled(false);
-        frameMain.add(btnMenuDerecho);
+        capas.add(btnMenuDerecho, Integer.valueOf(3));
 
 
         String[] asignaturas = archivosController.listarAsignaturas();
@@ -291,7 +290,7 @@ public class VentanaMain {
         panelCentral.removeAll();
 
         String nombreUsuario = sesion.getUsuarioActual().getNombre();
-        String rutaCarpeta = archivosController.getRutaAsignaturas() + "/" + nombre;
+        String rutaCarpeta = System.getProperty("user.dir") + "/Recursos/asignaturas/" + nombre;
 
         JLabel lblTitulo = herramientas.crearLabels(40, nombre.toUpperCase(), 20, 10, 800, 50);
         lblTitulo.setForeground(tema.getTexto());
@@ -424,5 +423,3 @@ public class VentanaMain {
         }
     }
 }
-
-

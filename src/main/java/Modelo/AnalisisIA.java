@@ -49,7 +49,6 @@ public class AnalisisIA {
         }
     }
 
-
     private JsonObject crearJsonPeticion(String pdfBase64) {
         JsonObject inlineData = new JsonObject();
         inlineData.addProperty("mime_type", "application/pdf");

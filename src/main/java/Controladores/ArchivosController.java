@@ -1,9 +1,5 @@
 package Controladores;
 
-import Modelo.AnalisisIA;
-import Modelo.ResultadoAnalisisIA;
-import Modelo.S3Servicio;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,42 +10,14 @@ public class ArchivosController {
 
     private final String rutaAsignaturas = System.getProperty("user.dir") + "/Recursos/asignaturas";
     private final String rutaUnidades    = System.getProperty("user.dir") + "/Recursos/Unidades";
-    private final String rutaPendientes  = System.getProperty("user.dir") + "/Recursos/pendientes";
-
 
     public String getRutaAsignaturas() {
         return rutaAsignaturas;
     }
 
-    public File getCarpetaPendientes() {
-        File carpeta = new File(rutaPendientes);
-        if (!carpeta.exists()) {
-            carpeta.mkdirs();
-        }
-        return carpeta;
+    public String getRutaUnidades() {
+        return rutaUnidades;
     }
-
-
-    public File guardarEnPendientes(File archivoOrigen, String nombreUsuario) throws IOException {
-        File carpetaPendientes = getCarpetaPendientes();
-
-        String nombreOriginal = archivoOrigen.getName();
-        String extension = "";
-        int punto = nombreOriginal.lastIndexOf('.');
-        if (punto != -1) {
-            extension = nombreOriginal.substring(punto); // incluye el punto
-            nombreOriginal = nombreOriginal.substring(0, punto);
-        }
-
-        String nombreLimpio = nombreOriginal.replaceAll("[^a-zA-Z0-9_\\-]", "_");
-        String nombreDestino = nombreLimpio + "_" + nombreUsuario + "_" + System.currentTimeMillis() + extension;
-
-        File destino = new File(carpetaPendientes, nombreDestino);
-        Files.copy(archivoOrigen.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-        return destino;
-    }
-
 
     public String[] listarAsignaturas() {
         File carpeta = new File(rutaAsignaturas);
@@ -84,7 +52,6 @@ public class ArchivosController {
         }
         return nombres;
     }
-
 
     public File crearUnidadUsuario(String nombreUsuario) {
         File carpetaUsuario = new File(rutaUnidades + "/Unidad " + nombreUsuario);
@@ -137,42 +104,18 @@ public class ArchivosController {
         }
     }
 
-
-    public String analizarYSubirPendienteConIA(File archivoPendiente) {
-        Path rutaOrigen = archivoPendiente.toPath();
-
-        if (!Files.exists(rutaOrigen)) {
-            return "Error: el archivo no existe.";
-        }
-        if (!rutaOrigen.toString().toLowerCase().endsWith(".pdf")) {
-            return "Error: solo se permiten archivos PDF.";
+    public File copiarArchivoA(File archivoOrigen, File carpetaDestino) throws IOException {
+        if (!carpetaDestino.exists()) {
+            carpetaDestino.mkdirs();
         }
 
-        try {
-            AnalisisIA servicioIA = new AnalisisIA();
-            String respuestaRaw = servicioIA.analizarArchivo(rutaOrigen);
+        Path origen = archivoOrigen.toPath();
+        Path destino = carpetaDestino.toPath().resolve(archivoOrigen.getName());
 
-            // Debug opcional (puedes comentarlo si molesta)
-            System.out.println("\n💀💀💀 DEBUG - LO QUE REALMENTE DIJO LA IA: 💀💀💀");
-            System.out.println("--------------------------------------------------");
-            System.out.println(respuestaRaw);
-            System.out.println("--------------------------------------------------\n");
+        Files.copy(origen, destino, StandardCopyOption.REPLACE_EXISTING);
 
-            ResultadoAnalisisIA resultado = new ResultadoAnalisisIA(respuestaRaw);
-
-            if (resultado.esAprobado()) {
-                S3Servicio servicioS3 = new S3Servicio();
-                String url = servicioS3.subirArchivo(rutaOrigen, resultado.getMateria());
-                return "Archivo APROBADO.\nClasificado en: " + resultado.getMateria()
-                        + "\nSubido exitosamente a: " + url;
-            } else if (resultado.esRechazado()) {
-                return "Archivo RECHAZADO.\nMotivo: " + resultado.getRazon();
-            } else {
-                return "Respuesta ambigua de la IA. Intenta nuevamente o revisa el archivo.";
-            }
-        } catch (Exception e) {
-            return "Error inesperado al procesar el archivo: " + e.getMessage();
-        }
+        return destino.toFile();
     }
 }
+
 

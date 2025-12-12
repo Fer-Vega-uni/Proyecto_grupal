@@ -32,6 +32,9 @@ public class ResultadoAnalisisIA {
         return "RECHAZADO".equalsIgnoreCase(status);
     }
 
-    public String getMateria() { return materia; }
-    public String getRazon() { return razon; }
+    public String getMateria() {
+        return materia; }
+
+    public String getRazon() {
+        return razon; }
 }

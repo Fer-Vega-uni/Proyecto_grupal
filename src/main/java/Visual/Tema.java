@@ -22,6 +22,7 @@ public class Tema {
         }
         return modo;
     }
+
     public void alternarTema() {
         modoOscuro = !modoOscuro;
         aplicarTema();

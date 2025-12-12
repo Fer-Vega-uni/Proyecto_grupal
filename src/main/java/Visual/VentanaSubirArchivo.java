@@ -45,20 +45,17 @@ public class VentanaSubirArchivo {
         panelBase.setLayout(null);
         frame.add(panelBase);
 
-
         panelContenido = herramientas.crearPanel(tema.getFondo(), 30, 60, 540, 250);
         panelContenido.setLayout(null);
         panelBase.add(panelContenido);
-
 
         JLabel lblTituloVentana = herramientas.crearLabels(
                 26, "Subir archivo PDF", 170, 15, 400, 35);
         lblTituloVentana.setForeground(tema.getBotonTexto());
         panelBase.add(lblTituloVentana);
 
-
         JLabel lblDescripcion = herramientas.crearLabels(
-                16, "Selecciona un archivo PDF para subir a tu unidad.", 30, 15, 480, 25);
+                16, "Selecciona un archivo PDF y luego la carpeta destino.", 30, 15, 480, 25);
         lblDescripcion.setForeground(tema.getTexto());
         panelContenido.add(lblDescripcion);
 
@@ -68,15 +65,13 @@ public class VentanaSubirArchivo {
         txtRutaArchivo.setBackground(Color.WHITE);
         panelContenido.add(txtRutaArchivo);
 
-
         JButton btnBuscar = herramientas.crearBoton(
                 "Buscar...", 410, 60, 100, 30, e -> seleccionarArchivo());
         estiloBoton(btnBuscar);
         panelContenido.add(btnBuscar);
 
-
         JButton btnSubir = herramientas.crearBoton(
-                "Subir a pendientes", 170, 120, 200, 40, e -> subirArchivo());
+                "Elegir carpeta y subir", 160, 120, 220, 40, e -> subirArchivo());
         estiloBoton(btnSubir);
         panelContenido.add(btnSubir);
 
@@ -121,45 +116,47 @@ public class VentanaSubirArchivo {
 
     private void subirArchivo() {
         if (archivoSeleccionado == null) {
-            JOptionPane.showMessageDialog(frame,
-                    "Primero debes seleccionar un archivo PDF.",
+            JOptionPane.showMessageDialog(frame, "Primero debes seleccionar un archivo PDF.",
                     "Sin archivo",
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        String nombreUsuario = sesion.getUsuarioActual().getNombre();
+        File carpetaBase = new File(archivosController.getRutaAsignaturas());
+
+
+        JFileChooser chooser = new JFileChooser(carpetaBase);
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setDialogTitle("Selecciona la carpeta donde guardar el archivo");
+
+        int resultado = chooser.showOpenDialog(frame);
+
+        if (resultado != JFileChooser.APPROVE_OPTION) {
+            lblEstado.setText("Subida cancelada. No se seleccionó carpeta.");
+            return;
+        }
+
+        File carpetaDestino = chooser.getSelectedFile();
 
         try {
+            File destino = archivosController.copiarArchivoA(archivoSeleccionado, carpetaDestino);
 
-            File destino = archivosController.guardarEnPendientes(archivoSeleccionado, nombreUsuario);
+            lblEstado.setText("Archivo copiado a: " + destino.getName());
 
-            lblEstado.setText("Archivo copiado a pendientes: " + destino.getName());
-
-
-            String resultado = archivosController.analizarYSubirPendienteConIA(destino);
-
-
-            JOptionPane.showMessageDialog(
-                    frame,
-                    resultado,
-                    "Resultado del análisis",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            JOptionPane.showMessageDialog(frame,
+                    "El archivo se copió correctamente en:\n" + destino.getAbsolutePath(),
+                    "Subida correcta",
+                    JOptionPane.INFORMATION_MESSAGE);
 
             frame.dispose();
-
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(
-                    frame,
+            JOptionPane.showMessageDialog(frame,
                     "Ocurrió un error al copiar el archivo.\n" + e.getMessage(),
                     "Error",
-                    JOptionPane.ERROR_MESSAGE
-            );
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     private void aplicarTema() {
         if (panelBase != null) {

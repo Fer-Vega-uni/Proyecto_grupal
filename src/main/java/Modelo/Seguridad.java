@@ -3,6 +3,7 @@ package Modelo;
 import java.security.MessageDigest;
 
 public class Seguridad {
+
     public static String encriptar(String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

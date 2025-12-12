@@ -1,6 +1,5 @@
 package Visual;
 
-
 import Controladores.SesionController;
 
 import javax.swing.*;
@@ -94,8 +93,8 @@ public class VentanaLogin {
 
                 frameLogin.dispose();
 
-               VentanaMain Main = new VentanaMain(sesion);
-               Main.mostrarVentanaMain();
+                VentanaMain Main = new VentanaMain(sesion);
+                Main.mostrarVentanaMain();
 
             } else {
                 JOptionPane.showMessageDialog(frameLogin,
@@ -110,7 +109,6 @@ public class VentanaLogin {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     private void cambiarTema() {
         tema.alternarTema();
