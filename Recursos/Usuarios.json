@@ -6,15 +6,21 @@
     "carrera": "I.C.Informatica"
   },
   {
+    "nombre": "Pablo Ramos",
+    "contrasena": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
+    "matricula": "22162796224",
+    "carrera": "I.C.Informatica"
+  },
+  {
     "nombre": "Fernanda Vega",
     "contrasena": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
     "matricula": "21876574224",
     "carrera": "I.C.Informatica"
   },
   {
-    "nombre": "Pablo Ramos",
+    "nombre": "Invitado",
     "contrasena": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4",
-    "matricula": "22162796224",
-    "carrera": "I.C.Informatica"
+    "matricula": "1111",
+    "carrera": "civil"
   }
 ]

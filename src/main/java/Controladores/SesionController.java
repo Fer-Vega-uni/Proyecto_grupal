@@ -69,7 +69,6 @@ public class SesionController {
         return false;
     }
 
-
     public boolean Registro(String m, String c, String n, String i) {
         if (n == null || n.isBlank() || c == null || c.isBlank() || m == null || m.isBlank() || i == null || i.isBlank()) {
 
