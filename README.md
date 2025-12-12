@@ -1,8 +1,6 @@
-﻿# Proyecto Grupal - Versión limpia DevOps
+﻿# Proyecto Grupal - Sistema Colaborativo de Apuntes (SCA)
 
- Sistema Colaborativo de Apuntes (SCA)
-
-Proyecto en Desarrollo - Prototipo Funcional correspondiente al Avance 02 de la asignatura Programación Orientada a Objetos.
+Proyecto en Desarrollo - Prototipo Funcional correspondiente a la asignatura Programación Orientada a Objetos.
 
 1. Descripción del Proyecto
 
@@ -20,24 +18,25 @@ Marcelo Orellana - [@morellana09-dotcom]
 
 3. Características Principales
 
-* Registro e Inicio de Sesión de usuarios (estudiantes).
+* Registro e Inicio de Sesión de usuarios (estudiantes) con encriptado de contraseñas.
 * Gestión de perfiles de usuario.
-* (Próximamente) Carga (upload) de archivos en formato PDF.
+* Carga (upload) de archivos en formato PDF.
 * Visualización y descarga de archivos PDF compartidos.
-* (Próximamente) Sistema de "Favoritos" para guardar apuntes de acceso rápido.
-* (Próximamente) Búsqueda y filtrado de apuntes por asignatura o palabra clave.
-* 
+* Análisis de IA para comprobar la integridad y relevancia de los archivos.
+* Carpetas personales por usuario. 
+ 
 
 4. Stack Tecnológico
 
-Lenguaje: Java (JDK 17)
-Interfaz Gráfica (GUI): Java Swing
+Lenguaje: Java (JDK 17).
+Interfaz Gráfica (GUI): Java Swing.
 Persistencia de Datos: Archivos JSON.
-Gestión de Proyecto: Git & GitHub
+Gestión de Proyecto: Git & GitHub.
+Pruebas unitarias: JUnit 5.
 
 5. Instalación y Ejecución Local
 
-El proyecto está configurado para ser ejecutado preferentemente desde un IDE de Java que soporte la compilación de proyectos Swing.
+El proyecto está configurado para ser ejecutado preferentemente desde un IDE de Java que soporte la compilación de proyectos de tipo Maven.
 
 Requisitos Previos:
 Java Development Kit (JDK) 17 o superior.
@@ -64,4 +63,5 @@ El IDE detectará la estructura del proyecto y sus dependencias.
 Localice el archivo Launcher.java dentro del paquete launcher.
 Haga clic derecho sobre Launcher.java y seleccione "Run File" (Ejecutar Archivo).
 Esto compilará el proyecto e iniciará la aplicación, mostrando la ventana de Login.
+
 
