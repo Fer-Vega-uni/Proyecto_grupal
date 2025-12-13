@@ -1,0 +1,502 @@
+DOCUMENTACIÓN COMPLETA DEL PROYECTO - SCA
+=========================================
+
+Contenido combinado de los archivos de documentación generados:
+
+- Archivos incluidos:
+  - ArchivosController_documentacion.txt
+  - SesionController_documentacion.txt
+  - Launcher_documentacion.txt
+  - AnalisisIA_documentacion.txt
+  - ResultadoAnalisisIA_documentacion.txt
+  - S3Servicio_documentacion.txt
+  - Seguridad_documentacion.txt
+  - Usuario_documentacion.txt
+  - UsuariosDAO_documentacion.txt
+  - Herramientas_documentacion.txt
+  - Tema_documentacion.txt
+  - VentanaLogin_documentacion.txt
+  - VentanaMain_documentacion.txt
+  - VentanaRegistro_documentacion.txt
+  - VentanaSubirArchivo_documentacion.txt
+
+--- INICIO: ArchivosController_documentacion.txt ---
+
+Documentación de la clase ArchivosController
+============================================
+
+Ubicación:
+- Paquete: `Controladores`
+- Archivo: `src/main/java/Controladores/ArchivosController.java`
+
+Propósito
+- Proporcionar utilidades para listar, crear, copiar y eliminar archivos y carpetas relacionados con las "asignaturas" y las "unidades de usuario" del proyecto.
+- Encapsula rutas base que apuntan al directorio `Recursos` del directorio de trabajo de la aplicación.
+
+Campos privados
+- `private final String rutaAsignaturas`:
+  - Descripción: Ruta base para las carpetas de asignaturas. Se inicializa con `System.getProperty("user.dir") + "/Recursos/asignaturas"`.
+  - Uso: Se usa como base para listar asignaturas y para obtener archivos dentro de cada asignatura.
+
+- `private final String rutaUnidades`:
+  - Descripción: Ruta base para las unidades de usuario. Se inicializa con `System.getProperty("user.dir") + "/Recursos/Unidades"`.
+  - Uso: Carpeta donde se crean y gestionan las carpetas personales de cada usuario (por ejemplo, `Unidad usuario`).
+
+Métodos públicos
+- `public String getRutaAsignaturas()`
+  - Devuelve la ruta base de asignaturas.
+  - Retorno: `String`.
+
+- `public String getRutaUnidades()`
+  - Devuelve la ruta base de unidades de usuario.
+  - Retorno: `String`.
+
+- `public String[] listarAsignaturas()`
+  - Acción: Busca las subcarpetas dentro de `rutaAsignaturas` y devuelve sus nombres.
+  - Retorno: `String[]` con los nombres de carpetas; si la carpeta no existe o no hay subdirectorios, devuelve un arreglo vacío.
+
+- `public String[] listarArchivos(String asignatura)`
+  - Parámetros: `asignatura` — nombre de la carpeta de asignatura cuya lista de archivos se desea obtener.
+  - Acción: Lista todos los archivos (y subcarpetas) contenidos en `rutaAsignaturas + "/" + asignatura` y devuelve sus nombres.
+  - Retorno: `String[]` con nombres de los archivos; si no existe la carpeta, devuelve arreglo vacío.
+
+- `public File crearUnidadUsuario(String nombreUsuario)`
+  - Parámetros: `nombreUsuario` — nombre del usuario para crear su carpeta.
+  - Acción: Crea (si no existe) la carpeta `rutaUnidades + "/Unidad " + nombreUsuario`.
+  - Efectos secundarios: Imprime mensajes por consola indicando si la carpeta fue creada, ya existía o si no pudo crearse.
+  - Retorno: `File` representando la carpeta de usuario (exista o no).
+
+- `public String[] listarUnidadUsuario(String nombreUsuario)`
+  - Parámetros: `nombreUsuario` — nombre del usuario.
+  - Acción: Asegura que la carpeta del usuario exista (llamando a `crearUnidadUsuario`) y lista los archivos dentro de ella.
+  - Retorno: `String[]` con nombres de archivos; si no hay archivos, devuelve arreglo vacío.
+
+- `public boolean eliminarArchivoUnidadUsuario(String nombreUsuario, String nombreArchivo)`
+  - Parámetros: `nombreUsuario`, `nombreArchivo`.
+  - Acción: Busca el archivo dentro de la carpeta del usuario y lo elimina si existe.
+  - Retorno: `boolean` — `true` si el archivo existía y fue eliminado; `false` en caso contrario.
+
+- `public boolean copiarDesdeAsignaturaAUnidad(String asignatura, String nombreArchivo, String nombreUsuario)`
+  - Parámetros: `asignatura`, `nombreArchivo`, `nombreUsuario`.
+  - Acción: Copia el archivo desde `rutaAsignaturas/asignatura/nombreArchivo` hacia la carpeta del usuario (creándola si hace falta). Si el archivo origen no existe o no es un archivo regular, devuelve `false`.
+  - Retorno: `boolean` — `true` si la copia fue exitosa; `false` en caso de error.
+  - Manejo de errores: Captura `IOException` y hace `e.printStackTrace()` devolviendo `false`.
+
+- `public File copiarArchivoA(File archivoOrigen, File carpetaDestino) throws IOException`
+  - Parámetros: `archivoOrigen` — archivo a copiar; `carpetaDestino` — carpeta de destino.
+  - Acción: Crea la carpeta de destino si no existe, copia el archivo al destino y devuelve el `File` resultante.
+  - Excepciones: Lanza `IOException` si ocurre un error durante la operación de E/S.
+  - Retorno: `File` que representa el archivo copiado en la carpeta de destino.
+
+Notas de implementación y consideraciones
+- Rutas: Las rutas se construyen usando `System.getProperty("user.dir")` y concatenando `"/Recursos/…"`. En Windows la barra `/` funciona en Java, pero puede preferirse `File.separator` para máxima portabilidad.
+- Impresiones por consola: `crearUnidadUsuario` imprime mensajes informativos a `System.out`. Considerar usar un logger para aplicaciones más grandes.
+- Concurrencia: La clase no está sincronizada; si varias hebras crean/eliminan archivos simultáneamente, pueden existir condiciones de carrera.
+- Permisos: Las operaciones de E/S dependen de permisos de archivo del usuario que ejecuta la JVM.
+- Validaciones: Algunos métodos devuelven arreglos vacíos cuando la carpeta no existe o está vacía; no lanzan excepciones en esos casos.
+
+--- FIN: ArchivosController_documentacion.txt ---
+
+--- INICIO: SesionController_documentacion.txt ---
+
+Documentación de la clase SesionController
+==========================================
+
+Ubicación:
+- Paquete: `Controladores`
+- Archivo: `src/main/java/Controladores/SesionController.java`
+
+Propósito
+- Gestionar la sesión de usuarios: iniciar/cerrar sesión, registrar nuevos usuarios y mantener la lista de usuarios en memoria y persistencia.
+- Durante la construcción, carga usuarios desde almacenamiento persistente y migra contraseñas planas a hashes si es necesario.
+
+Campos privados
+- `private ArrayList<Usuario> USUARIOS`:
+  - Descripción: Lista en memoria de objetos `Usuario` cargados desde el almacenamiento (archivo JSON gestionado por `UsuariosDAO`).
+  - Uso: Búsqueda de usuarios para autenticación, verificación de duplicados y almacenamiento.
+
+- `private Usuario UsuarioActual`:
+  - Descripción: Referencia al usuario actualmente autenticado en la sesión.
+  - Uso: Permite saber quién está logueado; `null` cuando no hay sesión iniciada.
+
+Constructor
+- `public SesionController()`
+  - Acción:
+    - Inicializa `UsuarioActual` a `null`.
+    - Intenta cargar la lista de usuarios mediante `UsuariosDAO.cargarUsuarios()` y asignarla a `USUARIOS`.
+    - Si ocurre una `IOException` durante la carga, inicia `USUARIOS` como lista vacía y registra la excepción.
+    - Comprueba cada usuario y, si su contraseña no tiene longitud 64 (es decir, no está en hash SHA-256), la encripta con `Seguridad.encriptar()` y marca que hubo cambios.
+    - Si hubo cambios (se migraron contraseñas), guarda la lista actualizada con `UsuariosDAO.guardarUsuarios(USUARIOS)`.
+  - Manejo de errores: Captura `IOException` tanto en la carga como en el guardado y hace `e.printStackTrace()`.
+
+Métodos públicos
+- `public Usuario getUsuarioActual()`
+  - Acción: Devuelve el `Usuario` actualmente autenticado o `null` si no hay sesión.
+  - Retorno: `Usuario`.
+
+- `public void cerrarSesion()`
+  - Acción: Cierra la sesión estableciendo `UsuarioActual` a `null`.
+
+- `public boolean iniciarSesion(String m, String c)`
+  - Parámetros:
+    - `m`: matrícula (identificador del usuario).
+    - `c`: contraseña en texto plano proporcionada por el usuario.
+  - Validaciones: Lanza `IllegalArgumentException` si `m` o `c` son `null` o están en blanco.
+  - Acción: Calcula el hash de la contraseña ingresada con `Seguridad.encriptar(c)` y compara con las contraseñas almacenadas en `USUARIOS`. Si encuentra coincidencia de matrícula y hash, establece `UsuarioActual` y devuelve `true`.
+  - Retorno: `boolean` — `true` si la autenticación fue exitosa; `false` si no se encontró coincidencia.
+
+- `public boolean Registro(String m, String c, String n, String i)`
+  - Parámetros:
+    - `m`: matrícula.
+    - `c`: contraseña en texto plano.
+    - `n`: nombre del usuario.
+    - `i`: identificador adicional (por ejemplo, correo o id).
+  - Validaciones: Lanza `IllegalArgumentException` si alguno de los parámetros es `null` o está en blanco.
+  - Validación de duplicados: Llama a `verifcarDuplicado(m, n)` y si retorna `true` lanza `IllegalArgumentException` indicando que ya existen registros con esa matrícula o nombre.
+  - Acción: Hashea la contraseña con `Seguridad.encriptar(c)`, crea un nuevo `Usuario` con los datos (nombre, hash, matrícula, identificador) y lo añade a `USUARIOS`. Intenta persistir la lista con `UsuariosDAO.guardarUsuarios(USUARIOS)`.
+  - Manejo de errores: Si `guardarUsuarios` lanza `IOException`, captura la excepción, imprime stack trace y lanza `IllegalArgumentException` indicando fallo de guardado.
+  - Retorno: `boolean` — `true` si el registro fue exitoso.
+
+- `public boolean verifcarDuplicado(String m, String n)`
+  - Parámetros: `m` (matrícula), `n` (nombre).
+  - Acción: Recorre `USUARIOS` buscando coincidencias por matrícula o nombre. Retorna `true` si encuentra duplicado; `false` en caso contrario.
+
+Notas de implementación y consideraciones
+- Persistencia: Depende de `UsuariosDAO.cargarUsuarios()` y `UsuariosDAO.guardarUsuarios(List<Usuario>)` para lectura y escritura en JSON.
+- Seguridad: Utiliza `Seguridad.encriptar()` para obtener hashes de contraseñas. El constructor realiza una migración automática de contraseñas no hasheadas a su hash (asume longitud 64 para el hash esperado).
+- Excepciones: En lugar de propagar `IOException`, el controlador captura excepciones y en algunos casos lanza `IllegalArgumentException` para indicar problemas visibles al usuario.
+- Nombres de métodos: `Registro` comienza con mayúscula (convención Java normalmente recomienda `registro`). Considerar renombrarlo para consistencia.
+- Thread-safety: No es segura para concurrencia; acceso simultáneo a `USUARIOS` puede requerir sincronización.
+
+--- FIN: SesionController_documentacion.txt ---
+
+--- INICIO: Launcher_documentacion.txt ---
+
+Documentación de la clase Launcher
+=================================
+
+Ubicación:
+- Paquete: `Launcher`
+- Archivo: `src/main/java/Launcher/Launcher.java`
+
+Propósito
+- Punto de entrada (clase `main`) de la aplicación.
+- Inicializa el controlador de sesión (`SesionController`) y abre la ventana de login (`VentanaLogin`).
+
+Comportamiento
+- `public static void main(String[] args)`
+  - Acción:
+    - Crea una instancia de `SesionController` para gestionar usuarios y sesiones.
+    - Crea una instancia de `VentanaLogin`, pasando la instancia de `SesionController` como dependencia.
+    - Llama a `mostrarVentanaLogin()` en la ventana de login para mostrar la interfaz gráfica inicial.
+  - Notas: No captura excepciones; se apoya en los constructores de `SesionController` y `VentanaLogin` para manejar errores o lanzar excepciones si ocurre algún problema.
+
+Dependencias principales
+- `Controladores.SesionController` — para gestionar inicio/cierre de sesión y registro de usuarios.
+- `Visual.VentanaLogin` — interfaz gráfica que recibe el `SesionController` para permitir el login y/o registro.
+
+Consideraciones
+- Simplicidad: La clase es intencionalmente mínima y delega toda la lógica a otros componentes (seguimiento de la responsabilidad única).
+- Entorno gráfico: Depende de que `VentanaLogin` implemente correctamente `mostrarVentanaLogin()` y maneje la inicialización de la UI.
+- Hilos: El `main` actual crea y muestra la ventana directamente; si la UI utiliza Swing, sería más apropiado lanzar la creación de la interfaz en el hilo de despacho de eventos (EDT) usando `SwingUtilities.invokeLater(...)`.
+
+--- FIN: Launcher_documentacion.txt ---
+
+--- INICIO: AnalisisIA_documentacion.txt ---
+
+Documentación de la clase AnalisisIA
+====================================
+
+Ubicación:
+- Paquete: `Modelo`
+- Archivo: `src/main/java/Modelo/AnalisisIA.java`
+
+Propósito
+- Enviar un PDF a la API de lenguaje generativo (Gemini) y obtener una clasificación del contenido.
+- Construye una petición con el PDF codificado en Base64 y un prompt específico que solicita una clasificación académica.
+
+Constantes y campos
+- `private static final String API_URL`:
+  - URL completa del endpoint de generación de contenido: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`.
+
+- `private final String apiKey`:
+  - Se obtiene desde la variable de entorno `GEMINI_API_KEY` mediante `System.getenv("GEMINI_API_KEY")`.
+  - Se usa como parámetro `key` en la URL de la petición.
+
+Métodos públicos
+- `public String analizarArchivo(Path rutaArchivo)`
+  - Parámetros: `rutaArchivo` — ruta al archivo PDF a analizar.
+  - Acción:
+    - Verifica que exista la clave API en la variable de entorno; si no, devuelve un mensaje de error.
+    - Lee los bytes del archivo y los codifica en Base64.
+    - Construye el JSON de la petición invocando `crearJsonPeticion`.
+    - Envía la petición HTTP POST al endpoint (añadiendo `?key=API_KEY` a la URL).
+    - Si la respuesta HTTP es 200, extrae el texto con `extraerTextoDeRespuesta` y lo devuelve.
+    - Si el servidor responde con otro código, devuelve un mensaje de error con el código y el cuerpo.
+  - Retorno: `String` — el texto devuelto por la IA o un mensaje de error.
+  - Manejo de errores: Captura `IOException` e `InterruptedException` y devuelve un mensaje que comienza con `ERROR DE CONEXIÓN:`.
+
+Métodos privados
+- `private JsonObject crearJsonPeticion(String pdfBase64)`
+  - Parámetros: `pdfBase64` — contenido del PDF codificado en Base64.
+  - Acción: Construye el objeto JSON que sigue la estructura requerida por el endpoint: un arreglo `contents`, cada `content` con `parts`, donde el primer `part` contiene `inline_data` (con `mime_type` y `data`), y el segundo `part` contiene el `text` con el prompt de clasificación.
+  - Retorno: `JsonObject` con la petición lista para serializar.
+
+- `private static JsonObject getJsonObject()`
+  - Acción: Devuelve un `JsonObject` que contiene el `prompt` (propiedad `text`) utilizado para instruir al modelo. El prompt pide clasificar el PDF como `APROBADO` o `RECHAZADO` y, si es aprobado, asignar una materia de una lista concreta.
+  - Observaciones: El prompt está definido con un text block (Java 15+) y está en español.
+
+--- FIN: AnalisisIA_documentacion.txt ---
+
+--- INICIO: ResultadoAnalisisIA_documentacion.txt ---
+
+Documentación de la clase ResultadoAnalisisIA
+=============================================
+
+Ubicación:
+- Paquete: `Modelo`
+- Archivo: `src/main/java/Modelo/ResultadoAnalisisIA.java`
+
+Propósito
+- Parsear la respuesta textual generada por la IA (según el formato esperado) y exponer el resultado de forma estructurada.
+- Proporcionar utilidades para consultar si el documento fue aprobado o rechazado y obtener la materia o la razón.
+
+Campos privados
+- `private String status`:
+  - Valor por defecto: `"DESCONOCIDO"`.
+  - Descripción: Estado interpretado de la respuesta (`APROBADO`, `RECHAZADO`, u otro).
+
+- `private String materia`:
+  - Valor por defecto: `"General"`.
+  - Descripción: Materia a la que la IA asignó el documento cuando `status` es `APROBADO`.
+
+- `private String razon`:
+  - Valor por defecto: `""`.
+  - Descripción: Texto explicativo con la razón de rechazo (si aplica).
+
+Métodos privados
+- `private void parsearTexto(String texto)`
+  - Acción: Divide el texto en líneas (`split("\\n")`), recorre cada línea y, si la línea comienza con `status:`, `materia:` o `razon:`, extrae el valor a la derecha de los dos puntos y lo asigna al campo correspondiente.
+  - Normalizaciones:
+    - El `trim()` se aplica a cada línea y al valor extraído.
+    - Si `materia` queda vacía tras extraerla, se asigna `"General"`.
+
+--- FIN: ResultadoAnalisisIA_documentacion.txt ---
+
+--- INICIO: S3Servicio_documentacion.txt ---
+
+Documentación de la clase S3Servicio
+===================================
+
+Ubicación:
+- Paquete: `Modelo`
+- Archivo: `src/main/java/Modelo/S3Servicio.java`
+
+Propósito
+- Encapsular la lógica para subir archivos a un bucket de Amazon S3.
+- Proporciona una interfaz simple para subir archivos locales al almacenamiento en la nube.
+
+Constantes y campos
+- `private final String BUCKET_NAME`:
+  - Valor: `"sistema-colaborativo-apuntes-bucket"`.
+  - Descripción: Nombre del bucket de S3 donde se almacenan los archivos.
+
+- `private final S3Client s3`:
+  - Descripción: Cliente de AWS S3 para interactuar con el servicio.
+  - Inicialización: Se configura en el constructor con región `US_EAST_1` y credenciales desde variables de entorno.
+
+Métodos públicos
+- `public String subirArchivo(Path archivoLocal, String carpetaDestino)`
+  - Parámetros:
+    - `archivoLocal`: `Path` que apunta al archivo a subir en el sistema de archivos local.
+    - `carpetaDestino`: `String` que representa la carpeta (prefijo) en el bucket de S3 donde se almacenará el archivo.
+  - Acción:
+    - Extrae el nombre del archivo desde la ruta local.
+    - Construye la clave S3 como `carpetaDestino + "/" + nombreArchivo`.
+    - Crea un `PutObjectRequest` con el nombre del bucket y la clave.
+    - Sube el archivo usando `s3.putObject(request, RequestBody.fromFile(archivoLocal))`.
+    - Construye y devuelve la URL pública del archivo en S3.
+  - Retorno: `String` — URL pública del archivo subido (formato: `https://bucket-name.s3.amazonaws.com/carpeta/archivo`).
+  - Manejo de errores: Captura `S3Exception` y lanza una `RuntimeException` con el mensaje de error de AWS.
+
+--- FIN: S3Servicio_documentacion.txt ---
+
+--- INICIO: Seguridad_documentacion.txt ---
+
+Documentación de la clase Seguridad
+==================================
+
+Ubicación:
+- Paquete: `Modelo`
+- Archivo: `src/main/java/Modelo/Seguridad.java`
+
+Propósito
+- Proporcionar utilidades criptográficas para asegurar datos sensibles, específicamente para encriptar contraseñas.
+- Ofrece un método estático para generar hashes SHA-256 de cadenas de texto (típicamente contraseñas).
+
+Métodos públicos
+- `public static String encriptar(String password)`
+  - Parámetro: `password` — cadena de texto a encriptar (típicamente una contraseña).
+  - Acción:
+    - Obtiene una instancia del algoritmo de hash SHA-256 mediante `MessageDigest.getInstance("SHA-256")`.
+    - Genera el hash del texto codificado en bytes UTF-8.
+    - Convierte cada byte del hash a su representación hexadecimal (formato de dos dígitos).
+    - Concatena todos los valores hexadecimales en una única cadena.
+  - Retorno: `String` — representación hexadecimal del hash SHA-256 (64 caracteres).
+  - Manejo de errores: Captura cualquier excepción (típicamente `NoSuchAlgorithmException`) y lanza una `RuntimeException` con mensaje descriptivo.
+
+--- FIN: Seguridad_documentacion.txt ---
+
+--- INICIO: Usuario_documentacion.txt ---
+
+Documentación de la clase Usuario
+=================================
+
+Ubicación:
+- Paquete: `Modelo`
+- Archivo: `src/main/java/Modelo/Usuario.java`
+
+Propósito
+- Representa un usuario del sistema con sus datos personales (nombre, contraseña, matrícula, carrera).
+- Encapsula la lógica de validación para garantizar que los datos no sean nulos o vacíos.
+- Utiliza anotaciones de Gson para serializar/deserializar la clase a/desde JSON.
+
+Campos privados
+- `private String Nombre`:
+  - Anotación: `@SerializedName("nombre")` (JSON).
+  - Descripción: Nombre completo del usuario.
+
+--- FIN: Usuario_documentacion.txt ---
+
+--- INICIO: UsuariosDAO_documentacion.txt ---
+
+Documentación de la clase UsuariosDAO
+====================================
+
+Ubicación:
+- Paquete: `Modelo`
+- Archivo: `src/main/java/Modelo/UsuariosDAO.java`
+
+Propósito
+- Implementar el patrón Data Access Object (DAO) para persistencia de usuarios.
+- Proporcionar métodos estáticos para cargar y guardar la lista de usuarios desde/hacia un archivo JSON.
+- Actúa como intermediario entre la lógica de negocio y el almacenamiento en archivos.
+
+Constantes y campos
+- `private static final Path RUTA`:
+  - Valor: `Path.of(System.getProperty("user.dir"), "Recursos", "Usuarios.json")`.
+  - Descripción: Ruta absoluta del archivo JSON donde se persisten los usuarios. Se construye dinámicamente basada en el directorio de trabajo de la aplicación.
+
+--- FIN: UsuariosDAO_documentacion.txt ---
+
+--- INICIO: Herramientas_documentacion.txt ---
+
+Documentación de la clase Herramientas
+====================================
+
+Ubicación:
+- Paquete: `Visual`
+- Archivo: `src/main/java/Visual/Herramientas.java`
+
+Propósito
+- Proporcionar métodos utilitarios reutilizables para crear componentes Swing de forma simplificada.
+- Centralizar la creación de etiquetas, campos de texto, botones, imágenes y paneles con estilos predefinidos.
+- Facilitar la consistencia visual en toda la interfaz gráfica.
+
+Métodos públicos
+
+- `public JLabel crearLabels(int letra, String Texto, int x, int y, int largo, int alto)`
+  - Parámetros:
+    - `letra`: tamaño de la fuente.
+    - `Texto`: contenido del label.
+    - `x, y`: posición en el panel contenedor.
+
+--- FIN: Herramientas_documentacion.txt ---
+
+--- INICIO: Tema_documentacion.txt ---
+
+Documentación de la clase Tema
+=============================
+
+Ubicación:
+- Paquete: `Visual`
+- Archivo: `src/main/java/Visual/Tema.java`
+
+Propósito
+- Implementar el patrón Singleton para gestionar temas visuales (claro/oscuro) de la aplicación.
+- Centralizar la configuración de colores (fondo, texto, botones) y permitir su alternancia en tiempo de ejecución.
+
+Campos privados
+- `private static Tema modo`:
+  - Descripción: Instancia única del singleton.
+  - Inicialización: `null` hasta que se llama a `getModo()` por primera vez.
+
+--- FIN: Tema_documentacion.txt ---
+
+--- INICIO: VentanaLogin_documentacion.txt ---
+
+Documentación de la clase VentanaLogin
+=====================================
+
+Ubicación:
+- Paquete: `Visual`
+- Archivo: `src/main/java/Visual/VentanaLogin.java`
+
+Propósito
+- Proporcionar la interfaz gráfica de inicio de sesión.
+- Gestionar la autenticación de usuarios mediante matrícula y contraseña.
+- Permitir navegación hacia el formulario de registro y cambio de tema.
+
+--- FIN: VentanaLogin_documentacion.txt ---
+
+--- INICIO: VentanaMain_documentacion.txt ---
+
+Documentación de la clase VentanaMain
+====================================
+
+Ubicación:
+- Paquete: `Visual`
+- Archivo: `src/main/java/Visual/VentanaMain.java`
+
+Propósito
+- Proporcionar la interfaz gráfica principal después del login.
+- Mostrar las asignaturas disponibles, la unidad personal del usuario y archivos descargables.
+- Gestionar operaciones: listar archivos, copiar entre carpetas, eliminar, subir y cambiar de tema.
+
+--- FIN: VentanaMain_documentacion.txt ---
+
+--- INICIO: VentanaRegistro_documentacion.txt ---
+
+Documentación de la clase VentanaRegistro
+========================================
+
+Ubicación:
+- Paquete: `Visual`
+- Archivo: `src/main/java/Visual/VentanaRegistro.java`
+
+Propósito
+- Proporcionar la interfaz gráfica para el registro de nuevos usuarios.
+- Recolectar datos (matrícula, contraseña, nombre, carrera) y validarlos.
+- Persistir la información del nuevo usuario en el sistema.
+
+--- FIN: VentanaRegistro_documentacion.txt ---
+
+--- INICIO: VentanaSubirArchivo_documentacion.txt ---
+
+Documentación de la clase VentanaSubirArchivo
+============================================
+
+Ubicación:
+- Paquete: `Visual`
+- Archivo: `src/main/java/Visual/VentanaSubirArchivo.java`
+
+Propósito
+- Proporcionar una interfaz gráfica para que los usuarios suban archivos PDF.
+- Permitir seleccionar un archivo local y elegir la carpeta de destino en el servidor de asignaturas.
+- Copiar archivos del sistema local al directorio de asignaturas.
+
+--- FIN: VentanaSubirArchivo_documentacion.txt ---
+
+
+Fecha de fusión: 12 de diciembre de 2025
+Generado automáticamente: Archivo combinado creado a partir de las documentaciones individuales.
